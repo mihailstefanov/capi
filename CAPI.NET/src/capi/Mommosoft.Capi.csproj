@@ -1,0 +1,190 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{2FA2A238-C18C-436F-BFA6-D85B46C10D0E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Mommosoft.Capi</RootNamespace>
+    <AssemblyName>Mommosoft.Capi</AssemblyName>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AsyncResultDictionary.cs" />
+    <Compile Include="CapiApplicationEvents.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CapiStreamWriter.cs" />
+    <Compile Include="Connection.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ConnectionCollection.cs">
+    </Compile>
+    <Compile Include="ControllerCollection.cs" />
+    <Compile Include="Events\IncomingLogicalConnectionEventArgs.cs">
+    </Compile>
+    <Compile Include="Events\ControllerEventArgs.cs" />
+    <Compile Include="ControllerStatus.cs" />
+    <Compile Include="Events\DTFMEventArgs.cs" />
+    <Compile Include="Messaging\ControllerParameter.cs" />
+    <Compile Include="Messaging\IndicationMessageBase.cs" />
+    <Compile Include="Messaging\B1Protocol.cs" />
+    <Compile Include="Messaging\B2Protocol.cs" />
+    <Compile Include="Messaging\B3Protocol.cs" />
+    <Compile Include="Messaging\CIPMask.cs" />
+    <Compile Include="Messaging\Connect\ConnectB3Request.cs" />
+    <Compile Include="Messaging\Disconnect\DisconnectB3Request.cs" />
+    <Compile Include="Messaging\Disconnect\DisconnectB3Confirmation.cs" />
+    <Compile Include="Messaging\DataB3InfoParameter.cs" />
+    <Compile Include="Messaging\Data\DataB3Confirmation.cs" />
+    <Compile Include="Messaging\Data\DataB3Request.cs" />
+    <Compile Include="Messaging\Disconnect\DisconnectB3Indication.cs" />
+    <Compile Include="Messaging\Disconnect\DisconnectB3Response.cs" />
+    <Compile Include="Helpers\ValidationHelper.cs" />
+    <Compile Include="Messaging\Alert\AlertConfirmation.cs" />
+    <Compile Include="Messaging\Alert\AlertRequest.cs" />
+    <Compile Include="Messaging\BProtocol.cs" />
+    <Compile Include="Messaging\ConformationMessageBase.cs" />
+    <Compile Include="Messaging\Connect\ConnectActiveIndication.cs" />
+    <Compile Include="Messaging\Connect\ConnectActiveResponse.cs" />
+    <Compile Include="Messaging\Connect\ConnectB3ActiveIndication.cs" />
+    <Compile Include="Messaging\Connect\ConnectB3ActiveResponse.cs" />
+    <Compile Include="Messaging\Connect\ConnectB3Indication.cs" />
+    <Compile Include="Messaging\Connect\ConnectB3Response.cs" />
+    <Compile Include="Messaging\Connect\ConnectB3Confirmation.cs" />
+    <Compile Include="Events\ConnectionEventArgs.cs" />
+    <Compile Include="Messaging\Data\DataB3Indication.cs" />
+    <Compile Include="Messaging\Data\DataB3Response.cs" />
+    <Compile Include="Messaging\Disconnect\DisconnectIndication.cs" />
+    <Compile Include="Messaging\Disconnect\DisconnectResponse.cs" />
+    <Compile Include="Messaging\Facility\DTMFFacilityRequestParameter.cs" />
+    <Compile Include="Messaging\Facility\DTMFInformation.cs" />
+    <Compile Include="Messaging\Facility\FacilityConfirmation.cs" />
+    <Compile Include="Messaging\Facility\FacilityFunction.cs" />
+    <Compile Include="Messaging\Facility\FacilityIndication.cs" />
+    <Compile Include="Messaging\Facility\FacilityRequest.cs" />
+    <Compile Include="Messaging\Facility\FacilitySelector.cs" />
+    <Compile Include="Messaging\IdentifierMessageBase.cs" />
+    <Compile Include="Messaging\MessageReceiver.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Events\IncomingPhysicalConnectionEventArgs.cs">
+    </Compile>
+    <Compile Include="Messaging\Info.cs" />
+    <Compile Include="Messaging\Info\InfoIndication.cs" />
+    <Compile Include="Messaging\Info\InfoResponse.cs" />
+    <Compile Include="Messaging\Listen\ListenConfirmation.cs" />
+    <Compile Include="Messaging\MessageAsyncResult.cs" />
+    <Compile Include="Events\MessageEventArgs.cs" />
+    <Compile Include="Messaging\MessageIdentityAttribute.cs" />
+    <Compile Include="Messaging\MessageIdentityDictionary.cs" />
+    <Compile Include="Messaging\NCCIParameter.cs" />
+    <Compile Include="Messaging\Reasons.cs" />
+    <Compile Include="Messaging\Reject.cs" />
+    <Compile Include="Messaging\Serializers\ByteSerializer.cs" />
+    <Compile Include="Messaging\Command.cs" />
+    <Compile Include="Messaging\Serializers\CapiSerializer.cs" />
+    <Compile Include="Messaging\Connect\ConnectConfirmation.cs" />
+    <Compile Include="Messaging\Connect\ConnectIndication.cs" />
+    <Compile Include="Messaging\Connect\ConnectRequest.cs" />
+    <Compile Include="Messaging\Connect\ConnectResponse.cs" />
+    <Compile Include="Messaging\ICapiSerialazable.cs" />
+    <Compile Include="Messaging\IParameter.cs" />
+    <Compile Include="Messaging\Listen\ListenRequest.cs" />
+    <Compile Include="Messaging\MessageHeader.cs" />
+    <Compile Include="Messaging\MessageIdentity.cs" />
+    <Compile Include="Messaging\Parameter.cs" />
+    <Compile Include="Messaging\ParameterCollection.cs" />
+    <Compile Include="Messaging\Message.cs" />
+    <Compile Include="Messaging\PLCIParameter.cs" />
+    <Compile Include="Messaging\Serializers\DWordSerializer.cs" />
+    <Compile Include="Messaging\Serializers\QWordSerializer.cs" />
+    <Compile Include="Messaging\Serializers\StringSerializer.cs" />
+    <Compile Include="Messaging\Serializers\WordSerializer.cs" />
+    <Compile Include="Messaging\PrefixedStringParameter.cs" />
+    <Compile Include="Messaging\SubCommand.cs" />
+    <Compile Include="Messaging\Serializers\TypeSerializer.cs" />
+    <Compile Include="ConnectionState.cs" />
+    <Compile Include="Properties\ProtocolStrings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ProtocolStrings.resx</DependentUpon>
+    </Compile>
+    <Compile Include="CapiApplication.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CapiException.cs" />
+    <Compile Include="CapiPInvoke.cs" />
+    <Compile Include="Controller.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Properties\InfoStrings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>InfoStrings.resx</DependentUpon>
+    </Compile>
+    <Compile Include="NativeMethods.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Protocol.cs" />
+    <Compile Include="ProtocolCollection.cs" />
+    <Compile Include="ReadOnlyBindingList.cs" />
+    <Compile Include="Messaging\RequestMessageBase.cs" />
+    <Compile Include="Messaging\ResponseMessageBase.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Capi.cd" />
+    <None Include="Messaging\MessageClassDiagram.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\ProtocolStrings.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ProtocolStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\InfoStrings.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>InfoStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
