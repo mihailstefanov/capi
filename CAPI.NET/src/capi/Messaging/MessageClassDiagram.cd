@@ -1,0 +1,229 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Mommosoft.Capi.Message" Collapsed="true">
+    <Position X="41" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAAADAAEEBAQAAEAAAABgAAAAgABAAEAAAAFAABA=</HashCode>
+      <FileName>Messaging\Message.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Mommosoft.Capi.IdentifierMessageBase&lt;T&gt;" Collapsed="true">
+    <Position X="40.75" Y="1.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Messaging\IdentifierMessageBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Mommosoft.Capi.ConformationMessageBase&lt;T&gt;" Collapsed="true">
+    <Position X="71.75" Y="3.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAQEAAAIA=</HashCode>
+      <FileName>Messaging\ConformationMessageBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Mommosoft.Capi.RequestMessageBase&lt;T&gt;" Collapsed="true">
+    <Position X="53" Y="3.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAA=</HashCode>
+      <FileName>Messaging\RequestMessageBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Mommosoft.Capi.IndicationMessageBase&lt;T&gt;" Collapsed="true">
+    <Position X="12" Y="3.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAA=</HashCode>
+      <FileName>Messaging\IndicationMessageBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Mommosoft.Capi.ResponseMessageBase&lt;T&gt;" Collapsed="true">
+    <Position X="34.75" Y="3.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAA=</HashCode>
+      <FileName>Messaging\ResponseMessageBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Mommosoft.Capi.ConnectIndication" Collapsed="true">
+    <Position X="10.25" Y="4.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAAAAAAAAACAAAAAAAQAAAABAAAAAAAAAAAA=</HashCode>
+      <FileName>Messaging\Connect\ConnectIndication.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Mommosoft.Capi.ConnectActiveIndication" Collapsed="true">
+    <Position X="16.75" Y="4.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAEAAAAAAAAAAAABAIAAAAAAAAAA=</HashCode>
+      <FileName>Messaging\Connect\ConnectActiveIndication.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Mommosoft.Capi.ConnectActiveResponse" Collapsed="true">
+    <Position X="39.5" Y="4.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Messaging\Connect\ConnectActiveResponse.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Mommosoft.Capi.ConnectB3ActiveIndication" Collapsed="true">
+    <Position X="23.25" Y="6.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAA=</HashCode>
+      <FileName>Messaging\Connect\ConnectB3ActiveIndication.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Mommosoft.Capi.ConnectB3ActiveResponse" Collapsed="true">
+    <Position X="42.75" Y="4.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Messaging\Connect\ConnectB3ActiveResponse.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Mommosoft.Capi.ConnectB3Confirmation" Collapsed="true">
+    <Position X="80.5" Y="4.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAA=</HashCode>
+      <FileName>Messaging\Connect\ConnectB3Confirmation.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Mommosoft.Capi.ConnectB3Indication" Collapsed="true">
+    <Position X="23.25" Y="4.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAA=</HashCode>
+      <FileName>Messaging\Connect\ConnectB3Indication.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Mommosoft.Capi.ConnectConfirmation" Collapsed="true">
+    <Position X="77" Y="4.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAA=</HashCode>
+      <FileName>Messaging\Connect\ConnectConfirmation.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Mommosoft.Capi.ConnectRequest" Collapsed="true">
+    <Position X="59.25" Y="4.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAgAAAAAAACAAAAAAAQAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Messaging\Connect\ConnectRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Mommosoft.Capi.ConnectResponse" Collapsed="true">
+    <Position X="36.25" Y="4.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAgAAAAAAAEAAAAAAAAAAAAAAIAAAAAAAAIA=</HashCode>
+      <FileName>Messaging\Connect\ConnectResponse.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Mommosoft.Capi.DataB3Confirmation" Collapsed="true">
+    <Position X="62.75" Y="4.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAACAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAA=</HashCode>
+      <FileName>Messaging\Data\DataB3Confirmation.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Mommosoft.Capi.DataB3Indication" Collapsed="true">
+    <Position X="3.75" Y="4.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJAAAAAAAAAAAA=</HashCode>
+      <FileName>Messaging\Data\DataB3Indication.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Mommosoft.Capi.DataB3Request" Collapsed="true">
+    <Position X="46" Y="4.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAACAAAAAAAAAACAAAAAAAAABAAAAAAAAAAAAA=</HashCode>
+      <FileName>Messaging\Data\DataB3Request.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Mommosoft.Capi.DataB3Response" Collapsed="true">
+    <Position X="29.75" Y="4.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAA=</HashCode>
+      <FileName>Messaging\Data\DataB3Response.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Mommosoft.Capi.DisconnectB3Confirmation" Collapsed="true">
+    <Position X="73.5" Y="4.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAA=</HashCode>
+      <FileName>Messaging\Disconnect\DisconnectB3Confirmation.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Mommosoft.Capi.DisconnectB3Indication" Collapsed="true">
+    <Position X="0.5" Y="4.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAA=</HashCode>
+      <FileName>Messaging\Disconnect\DisconnectB3Indication.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Mommosoft.Capi.DisconnectB3Request" Collapsed="true">
+    <Position X="49.25" Y="4.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Messaging\Disconnect\DisconnectB3Request.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Mommosoft.Capi.DisconnectB3Response" Collapsed="true">
+    <Position X="26.5" Y="4.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Messaging\Disconnect\DisconnectB3Response.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Mommosoft.Capi.DisconnectIndication" Collapsed="true">
+    <Position X="7" Y="4.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAIAAAAAAAAAAAAAAABAAAAAAAAAAAA=</HashCode>
+      <FileName>Messaging\Disconnect\DisconnectIndication.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Mommosoft.Capi.DisconnectResponse" Collapsed="true">
+    <Position X="33" Y="4.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Messaging\Disconnect\DisconnectResponse.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Mommosoft.Capi.FacilityConfirmation" Collapsed="true">
+    <Position X="70" Y="4.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAAAAAAAAAAAAAAAAAAAAAgBAAAAAAAAAAAA=</HashCode>
+      <FileName>Messaging\Facility\FacilityConfirmation.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Mommosoft.Capi.FacilityIndication" Collapsed="true">
+    <Position X="20" Y="4.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAEAAAAAAgBAAAAAAAAAAAA=</HashCode>
+      <FileName>Messaging\Facility\FacilityIndication.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Mommosoft.Capi.FacilityRequest" Collapsed="true">
+    <Position X="52.5" Y="4.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAA=</HashCode>
+      <FileName>Messaging\Facility\FacilityRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Mommosoft.Capi.ListenConfirmation" Collapsed="true">
+    <Position X="66.25" Y="4.75" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAA=</HashCode>
+      <FileName>Messaging\Listen\ListenConfirmation.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Mommosoft.Capi.ListenRequest" Collapsed="true">
+    <Position X="55.75" Y="4.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAACAAQAAAAAAAAAAQAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Messaging\Listen\ListenRequest.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Mommosoft.Capi.InfoIndication" Collapsed="true">
+    <Position X="13.5" Y="4.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAA=</HashCode>
+      <FileName>Messaging\Info\InfoIndication.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
