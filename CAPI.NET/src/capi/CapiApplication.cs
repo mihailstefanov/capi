@@ -77,7 +77,7 @@ namespace Mommosoft.Capi {
         private ControllerCollection CreateControllerCollection() {
             NativeMethods.Profile profile = CapiPInvoke.GetProfile(0);
             List<Controller> controllerList = new List<Controller>();
-            for (Int16 i = 1; i <= profile.number; i++) {
+            for (UInt16 i = 1; i <= profile.number; i++) {
                 controllerList.Add(new Controller(this, i));
             }
             return new ControllerCollection(controllerList);
@@ -104,7 +104,7 @@ namespace Mommosoft.Capi {
             }
         }
 
-        internal Controller GetControllerByID(int id) {
+        internal Controller GetControllerByID(uint id) {
             return Controllers.GetControllerByID(id);
         }
 
@@ -115,39 +115,8 @@ namespace Mommosoft.Capi {
         internal void RemoveMessageAsyncResult(short id) {
             _asyncDictionary.RemoveSafe(id);
         }
-
-        //private void OnConfirmation(MessageHeader header, Message message)
-        //{ 
-
-
-        //                case Command.Facility:
-        //                    result.Caller.FacilityConfirmation(header, (FacilityConfirmation)message, result);
-        //                    break;
-        //                case Command.DisconnectB3:
-        //                    result.Caller.DisconnectB3Confirmation(header, (DisconnectB3Confirmation)message, result);
-        //                    break;
-        //                case Command.DataB3:
-        //                    result.Caller.DataB3Confirmation(header, (DataB3Confirmation)message, result);
-        //                    break;
-        //            }
-        //        }
-        //        catch (Exception e)
-        //        {
-        //            Trace.TraceError("CapiApplication#{0}::OnConfirmation, Exception = {1}", ValidationHelper.HashString(this), e);
-
-        //            // HACK check to see if result is complited.
-        //            if (!result.IsCompleted)
-        //            {
-        //                result.InvokeCallback(e);
-        //            }
-        //            throw;
-        //        }
-
-        //        _asyncDictionary.RemoveSafe(header.ID);
-        //    }
-        //}
-
-        internal void SendMessage(Message message) {
+ 
+        public void SendMessage(Message message) {
             using (MemoryStream stream = new MemoryStream()) {
                 if (message.Identity.SubCommand == SubCommand.Request && message.Number == 0) {
                     message.Number = GetUniqueMessageNumber();
@@ -164,16 +133,22 @@ namespace Mommosoft.Capi {
         }
 
 
-        public Version GetVersion() {
-            return CapiPInvoke.GetVersion();
+        public Version CapiVersion {
+            get {
+                return CapiPInvoke.GetVersion();
+            }
         }
 
-        public string GetManufacturer() {
-            return CapiPInvoke.GetManufacturer();
+        public string Manufacturer {
+            get {
+                return CapiPInvoke.GetManufacturer();
+            }
         }
 
-        public string GetSerialNumber() {
-            return CapiPInvoke.GetSerialNumber();
+        public string SerialNumber {
+            get {
+                return CapiPInvoke.GetSerialNumber();
+            }
         }
 
 

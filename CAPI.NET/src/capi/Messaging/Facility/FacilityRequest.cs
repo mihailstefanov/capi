@@ -4,9 +4,9 @@ namespace Mommosoft.Capi {
     using System.Text;
 
     [MessageIdentity(Command.Facility, SubCommand.Request)]
-    public class FacilityRequest : RequestMessageBase<Parameter<int>> {
+    public class FacilityRequest : RequestMessageBase<Parameter<uint>> {
         public FacilityRequest()
-            : base(new Parameter<int>()) {
+            : base(new Parameter<uint>()) {
             // Facility selector
             ParameterCollection.Add(new Parameter<short>());
             // Facility Request Parameter 

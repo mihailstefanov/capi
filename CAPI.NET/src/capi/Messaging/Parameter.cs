@@ -10,13 +10,16 @@ namespace Mommosoft.Capi {
         private T _value;
         private TypeSerializer<T> _serializer;
 
-        public Parameter() : this(null, default(T)) { }
-        public Parameter(T value) : this(null, value) { }
+        public Parameter() {
+            _serializer = TypeSerializer<T>.Default;
+        }
+
+        public Parameter(T value) : this() {
+            _value = value;
+        }
+        
         public Parameter(TypeSerializer<T> serializer, T value) {
             _value = value;
-            if (serializer == null) {
-                serializer = TypeSerializer<T>.Default;
-            }
             _serializer = serializer;
         }
 

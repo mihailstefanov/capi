@@ -33,7 +33,7 @@ namespace Mommosoft.Capi {
 
         internal override void Notify(CapiApplication application) {
             Controller controller = application.GetControllerByID(Identifier.ControllerID);
-            Connection connection = controller.GetConnectionByID(Identifier.PLCI);
+            Connection connection = controller.GetConnectionByPLCI(Identifier.PLCI);
             connection.ConnectActiveIndication(this);
         }
     }

@@ -35,7 +35,7 @@ namespace Mommosoft.Capi {
                 base.ClearItems();
                 AllowRemove = oldValue;
             } else
-                throw new NotSupportedException();
+                throw Error.NotSupported();
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace Mommosoft.Capi {
             if (!IsReadOnly)
                 return base.AddNewCore();
             else
-                throw new NotSupportedException();
+                throw Error.NotSupported();
         }
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace Mommosoft.Capi {
             if (!IsReadOnly)
                 ProtectedInsertItem(index, item);
             else
-                throw new NotSupportedException();
+                throw Error.NotSupported();
         }
 
         protected void ProtectedInsertItem(int index, C item) {
@@ -70,7 +70,7 @@ namespace Mommosoft.Capi {
             if (!IsReadOnly) {
                 ProtectedRemoveItem(index);
             } else
-                throw new NotSupportedException();
+                throw Error.NotSupported();
         }
 
         protected void ProtectedRemoveItem(int index) {
@@ -89,7 +89,7 @@ namespace Mommosoft.Capi {
             if (!IsReadOnly)
                 ProtectedSetItem(index, item);
             else
-                throw new NotSupportedException();
+                throw Error.NotSupported();
         }
 
         protected void ProtectedSetItem(int index, C item) {

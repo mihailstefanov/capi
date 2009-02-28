@@ -9,7 +9,7 @@ namespace Mommosoft.Capi {
 
         internal override void Notify(CapiApplication application, MessageAsyncResult result) {
             Controller controller = application.GetControllerByID(Identifier.ControllerID);
-            Connection connection = controller.GetConnectionByID(Identifier.PLCI);
+            Connection connection = controller.GetConnectionByPLCI(Identifier.PLCI);
             connection.ConnectB3Confirmation(this, result);
         }
     }

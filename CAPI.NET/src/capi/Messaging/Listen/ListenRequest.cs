@@ -5,7 +5,7 @@ namespace Mommosoft.Capi {
 
     [MessageIdentity(Command.Listen, SubCommand.Request)]
     public class ListenRequest : RequestMessageBase<ControllerParameter> {
-        public ListenRequest(int controller)
+        public ListenRequest(uint controller)
             : base(new ControllerParameter()) {
             Identifier.Value = controller;
 

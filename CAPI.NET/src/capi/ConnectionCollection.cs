@@ -6,28 +6,28 @@ namespace Mommosoft.Capi {
     using System.ComponentModel;
 
     public class ConnectionCollection : ReadOnlyBindingList<Connection> {
-        private Dictionary<byte, Connection> _dictionary;
+        private Dictionary<uint, Connection> _dictionary;
         internal ConnectionCollection() {
             IsReadOnly = true;
-            _dictionary = new Dictionary<byte, Connection>();
+            _dictionary = new Dictionary<uint, Connection>();
         }
 
-        public Connection GetConnectionByID(byte connectionID) {
+        public Connection GetConnectionByPLCI(uint plci) {
             lock (_dictionary) {
-                Connection connection;
-                _dictionary.TryGetValue(connectionID, out connection);
+                Connection connection = null;
+                _dictionary.TryGetValue(plci, out connection);
                 return connection;
             }
         }
 
         internal void InternalAdd(Connection connection) {
             lock (_dictionary) {
-                _dictionary.Add(connection.ID, connection);
+                _dictionary.Add(connection.PLCI, connection);
                 ProtectedInsertItem(0, connection);
             }
         }
 
-        internal void InternalRemove(byte connectionID) {
+        internal void InternalRemove(uint connectionID) {
             lock (_dictionary) {
                 Connection connection;
                 if (_dictionary.TryGetValue(connectionID, out connection)) {

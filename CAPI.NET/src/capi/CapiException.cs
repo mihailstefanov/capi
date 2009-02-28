@@ -9,6 +9,8 @@ namespace Mommosoft.Capi {
     public class CapiException : Exception {
         private Info _code;
 
+        public CapiException() { }
+        public CapiException(string message) : base(message) { }
         public CapiException(Info code, string message)
             : base(message) {
             _code = code;

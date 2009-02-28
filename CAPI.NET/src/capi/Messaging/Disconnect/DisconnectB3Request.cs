@@ -5,7 +5,7 @@
 
     [MessageIdentity(Command.DisconnectB3, SubCommand.Request)]
     public class DisconnectB3Request : RequestMessageBase<NCCIParameter> {
-        public DisconnectB3Request(int identifier)
+        public DisconnectB3Request(uint identifier)
             : base(new NCCIParameter()) {
             Identifier.Value = identifier;
             // NCPI

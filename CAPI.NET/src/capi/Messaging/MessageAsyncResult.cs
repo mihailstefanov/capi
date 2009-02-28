@@ -10,7 +10,7 @@ namespace Mommosoft.Capi {
         private const int HighBit = unchecked((int)0x80000000);
         private const int ForceAsyncCount = 50;
 
-        //private object _asyncObject = null;                // Caller's async object.
+        //private object _asyncObject = null;       // Caller's async object.
         private object _asyncState;                 // Caller's state object.
         private AsyncCallback _asyncCallback;       // Caller's callback method.
         private bool _userEvent;                    // true if the event has been (or is about to be) handed to the user
@@ -256,7 +256,7 @@ namespace Mommosoft.Capi {
         }
 
         internal object InternalWaitForCompletion() {
-            return this.WaitForCompletion(true);
+            return WaitForCompletion(true);
         }
 
         private object WaitForCompletion(bool snap) {

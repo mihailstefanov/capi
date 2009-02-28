@@ -4,9 +4,9 @@ namespace Mommosoft.Capi {
     using System.Text;
 
     [MessageIdentity(Command.Facility, SubCommand.Indication)]
-    public class FacilityIndication : IndicationMessageBase<Parameter<int>> {
+    public class FacilityIndication : IndicationMessageBase<Parameter<uint>> {
         public FacilityIndication()
-            : base(new Parameter<int>()) {
+            : base(new Parameter<uint>()) {
             // Facility selector
             ParameterCollection.Add(new Parameter<short>());
 
@@ -31,7 +31,7 @@ namespace Mommosoft.Capi {
         internal override void Notify(CapiApplication application) {
             PLCIParameter p = new PLCIParameter(Identifier.Value);
             Controller controller = application.GetControllerByID(p.ControllerID);
-            Connection connection = controller.GetConnectionByID(p.PLCI);
+            Connection connection = controller.GetConnectionByPLCI(p.PLCI);
             connection.FacilityIndication(this);
         }
     }

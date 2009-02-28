@@ -9,7 +9,7 @@
 
         internal override void Notify(CapiApplication application, MessageAsyncResult result) {
             Controller controller = application.GetControllerByID(Identifier.ControllerID);
-            Connection connection = controller.GetConnectionByID(Identifier.PLCI);
+            Connection connection = controller.Connections.GetConnectionByPLCI(Identifier.PLCI);
             connection.DisconnectB3Confirmation(this, result);
         }
     }

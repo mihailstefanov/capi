@@ -6,7 +6,7 @@ namespace Mommosoft.Capi {
     using System.Runtime.InteropServices;
     using System.Diagnostics;
 
-    internal class CapiSerializer {
+    public class CapiSerializer {
 
         private CapiApplication _application;
 
@@ -17,8 +17,7 @@ namespace Mommosoft.Capi {
         public void Serialize(Stream stream, Message message) {
             Debug.Assert(message.Identity.SubCommand == SubCommand.Response ||
                 message.Identity.SubCommand == SubCommand.Request, "Message send to the CAPI from application can be request or response.");
-            MemoryStream tempStream = new MemoryStream();
-            BinaryWriter writer = new BinaryWriter(tempStream, Encoding.ASCII);
+            BinaryWriter writer = new BinaryWriter(stream, Encoding.ASCII);
 
             MessageHeader header = new MessageHeader();
             header.Command = message.Identity.Command;
@@ -29,11 +28,10 @@ namespace Mommosoft.Capi {
             ((ICapiSerializable)header).Write(writer);
             ((ICapiSerializable)message).Write(writer);
 
-            header.TotalLength = (Int16)tempStream.Length;
+            header.TotalLength = (Int16)stream.Length;
 
             writer.Seek(0, SeekOrigin.Begin);
             writer.Write(header.TotalLength);
-            stream.Write(tempStream.GetBuffer(), 0, (int)tempStream.Length);
         }
 
         public Message Deserialize(Stream stream, out MessageHeader header) {

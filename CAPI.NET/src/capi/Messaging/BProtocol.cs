@@ -28,23 +28,22 @@ namespace Mommosoft.Capi {
 
         void ICapiSerializable.Read(BinaryReader reader) {
             byte lenght = reader.ReadByte();
-            Debug.Assert(lenght == 10);
+            Debug.Assert(lenght == Length);
             _b1 = (B1Protocol)reader.ReadInt16();
             _b2 = (B2Protocol)reader.ReadInt16();
             _b3 = (B3Protocol)reader.ReadInt16();
         }
 
         public byte Length {
-            get { return 10; }
+            get { return 9; }
         }
 
         void ICapiSerializable.Write(BinaryWriter writer) {
             writer.Write(Length);
-
             writer.Write((Int16)_b1);
             writer.Write((Int16)_b2);
             writer.Write((Int16)_b3);
-            writer.Write(new byte[4]);
+            writer.Write(new byte[3]);
         }
     }
 }

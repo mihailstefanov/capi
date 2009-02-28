@@ -5,7 +5,8 @@ namespace Mommosoft.Capi {
 
     public enum ControllerStatus {
         Idle = 0,
-        Calling,
+        Connecting,
+        Connected,
         Listen
     }
 }

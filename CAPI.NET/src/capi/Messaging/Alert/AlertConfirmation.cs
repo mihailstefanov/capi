@@ -8,7 +8,9 @@ namespace Mommosoft.Capi {
         public AlertConfirmation() : base(new PLCIParameter()) { }
 
         internal override void Notify(CapiApplication application, MessageAsyncResult result) {
-            throw new NotImplementedException();
+            Controller controller = application.GetControllerByID(Identifier.ControllerID);
+            Connection connection = controller.GetConnectionByPLCI(Identifier.PLCI);
+            connection.AlertConfirmation(this, result);
         }
     }
 }

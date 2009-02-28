@@ -35,15 +35,15 @@ namespace Mommosoft.Capi {
                 } else if (IntPtr.Size == 8) {
                     return (IntPtr)(((Parameter<Int64>)ParameterCollection[5]).Value);
                 }
-                throw new NotSupportedException();
+                throw Error.NotSupported();
             }
             set {
                 if (IntPtr.Size == 4) {
-                    (((Parameter<int>)ParameterCollection[1]).Value) = (Int32)value;
+                    (((Parameter<int>)ParameterCollection[1]).Value) = value.ToInt32();
                 } else if (IntPtr.Size == 8) {
-                    (((Parameter<Int64>)ParameterCollection[5]).Value) = (Int64)value;
+                    (((Parameter<Int64>)ParameterCollection[5]).Value) = value.ToInt64();
                 } else {
-                    throw new NotSupportedException();
+                    throw Error.NotSupported();
                 }
             }
         }

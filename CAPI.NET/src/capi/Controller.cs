@@ -11,31 +11,25 @@ namespace Mommosoft.Capi {
 
     public partial class Controller : Component {
         private int _timeout = 1000 * 60; // 1 min.
-        private int _id;
+        private uint _id;
         private CapiApplication _application;
         private ProtocolCollection _protocols;
         private ConnectionCollection _connections;
-        private bool _alert;
         private ControllerStatus _status;
 
-        internal Controller(CapiApplication application, int id) {
+        internal Controller(CapiApplication application, uint id) {
             _connections = new ConnectionCollection();
             _application = application;
             _id = id;
             _status = ControllerStatus.Idle;
         }
 
-        public int ID {
+        public uint ID {
             get { return _id; }
         }
 
         public CapiApplication Application {
             get { return _application; }
-        }
-
-        public bool Alert {
-            get { return _alert; }
-            set { _alert = value; }
         }
 
         public ControllerStatus Status {
@@ -57,22 +51,60 @@ namespace Mommosoft.Capi {
             }
         }
 
-        public Connection GetConnectionByID(byte id) {
-            return Connections.GetConnectionByID(id);
+        public Connection GetConnectionByPLCI(uint id) {
+            return Connections.GetConnectionByPLCI(id);
         }
 
-        public IAsyncResult BeginCall(string callingPartyNumber, string calledPartyNumber, AsyncCallback callback, object state) {
+
+        #region Connect
+
+        /// <summary>
+        /// Call calledPartyNumber.
+        /// </summary>
+        /// <param name="callingPartyNumber">our number</param>
+        /// <param name="calledPartyNumber">called party number</param>
+        /// <returns></returns>
+        public Connection Connect(string callingPartyNumber, string calledPartyNumber, int service,
+            B1Protocol b1, B2Protocol b2, B3Protocol b3) {
+            IAsyncResult asyncResult;
+            try {
+                asyncResult = BeginConnect(callingPartyNumber, calledPartyNumber, service, b1, b2, b3, null, null);
+                if (((_timeout != -1) && !asyncResult.IsCompleted) && (!asyncResult.AsyncWaitHandle.WaitOne(_timeout, false) || !asyncResult.IsCompleted)) {
+                    throw new TimeoutException("Listen");
+                }
+                return EndConnect(asyncResult);
+            } catch (Exception e) {
+                Trace.TraceError("Controller#{0}::Call, Exception = {1}", ValidationHelper.HashString(this), e);
+                throw;
+            }
+        }
+
+
+        public IAsyncResult BeginConnect(string callingPartyNumber, string calledPartyNumber, int service,
+            B1Protocol b1, B2Protocol b2, B3Protocol b3, AsyncCallback callback, object state) {
             try {
                 ConnectRequest request = new ConnectRequest(_id);
-                request.CIPValue = 16;
-                request.BPtotocol.B1 = B1Protocol.HDLC64BFN;
-                request.BPtotocol.B2 = B2Protocol.Transparent;
+                UInt16 CIPValue = 0;
+                if (service != 0) {
+                    do {
+                        if ((service & 1) != 0) break;
+                        service >>= 1;
+                        CIPValue++;
+                    } while (CIPValue < 31);
+                }
+
+                request.CIPValue = CIPValue;
+
                 request.CalledPartyNumber = calledPartyNumber;
                 request.CallingPartyNumber = callingPartyNumber;
 
+                request.BPtotocol.B1 = b1;
+                request.BPtotocol.B2 = b2;
+                request.BPtotocol.B3 = b3;
+
                 MessageAsyncResult result = new MessageAsyncResult(this, request, callback, state);
                 _application.SendRequestMessage(result);
-                _status = ControllerStatus.Calling;
+                _status = ControllerStatus.Connecting;
                 return result;
             } catch (Exception e) {
                 Trace.TraceError("Controller#{0}::BeginListen, Exception = {1}", ValidationHelper.HashString(this), e);
@@ -80,7 +112,7 @@ namespace Mommosoft.Capi {
             }
         }
 
-        public Connection EndCall(IAsyncResult asyncResult) {
+        public Connection EndConnect(IAsyncResult asyncResult) {
             try {
                 MessageAsyncResult result = asyncResult as MessageAsyncResult;
                 if (asyncResult == null || result == null) {
@@ -90,6 +122,7 @@ namespace Mommosoft.Capi {
                 if (o is Exception) {
                     throw ((Exception)o);
                 }
+               
                 return (Connection)result.Result;
             } catch (Exception e) {
                 Trace.TraceError("Controller#{0}::EndCall, Exception = {1}", ValidationHelper.HashString(this), e);
@@ -97,32 +130,14 @@ namespace Mommosoft.Capi {
             }
         }
 
-        /// <summary>
-        /// Call calledPartyNumber.
-        /// </summary>
-        /// <param name="callingPartyNumber">our number</param>
-        /// <param name="calledPartyNumber">called party number</param>
-        /// <returns></returns>
-        public Connection Call(string callingPartyNumber, string calledPartyNumber) {
-            IAsyncResult asyncResult;
-            try {
-                asyncResult = BeginCall(callingPartyNumber, calledPartyNumber, null, null);
-                if (((_timeout != -1) && !asyncResult.IsCompleted) && (!asyncResult.AsyncWaitHandle.WaitOne(_timeout, false) || !asyncResult.IsCompleted)) {
-                    throw new TimeoutException("Listen");
-                }
-                return EndCall(asyncResult);
-            } catch (Exception e) {
-                Trace.TraceError("Controller#{0}::Call, Exception = {1}", ValidationHelper.HashString(this), e);
-                throw;
-            }
-        }
+        #endregion Connect
 
-        public IAsyncResult BeginListen(string callingPartyNumber, string callingSubaddress, AsyncCallback callback, object state) {
+        #region Listen
+
+        public IAsyncResult BeginListen(CIPMask CIPMask, AsyncCallback callback, object state) {
             try {
                 ListenRequest request = new ListenRequest(_id);
-                //request.CallingPartyNumber = callingPartyNumber;
-                //request.CallingSubaddress = callingSubaddress;
-                //request.CIPMask = CIPMask.Speech | CIPMask.Telephony | CIPMask.Telephony7KHZ | CIPMask.Audio7KHZ | CIPMask.Audio31KHZ;
+                request.CIPMask = CIPMask;
                 MessageAsyncResult result = new MessageAsyncResult(this, request, callback, state);
                 _application.SendRequestMessage(result);
                 return result;
@@ -149,14 +164,10 @@ namespace Mommosoft.Capi {
             }
         }
 
-        public void Listen() {
-            Listen(string.Empty, string.Empty);
-        }
-
-        public void Listen(string callingPartyNumber, string callingSubaddress) {
+        public void Listen(CIPMask CIPMask) {
             IAsyncResult asyncResult;
             try {
-                asyncResult = BeginListen(callingPartyNumber, callingSubaddress, null, null);
+                asyncResult = BeginListen(CIPMask, null, null);
                 if (((_timeout != -1) && !asyncResult.IsCompleted) && (!asyncResult.AsyncWaitHandle.WaitOne(_timeout, false) || !asyncResult.IsCompleted)) {
                     throw new TimeoutException("Listen");
                 }
@@ -167,6 +178,8 @@ namespace Mommosoft.Capi {
 
             }
         }
+
+        #endregion Listen
 
         public override string ToString() {
             return string.Format("Controller {0}", _id);
@@ -221,37 +234,38 @@ namespace Mommosoft.Capi {
         }
 
         internal void DisconnectIndication(DisconnectIndication indication) {
-            Connection connection = _connections.GetConnectionByID(indication.Identifier.PLCI);
-            Debug.Assert(connection != null, "Connecion needs to be already initialized by connect confirmation.");
-            connection.DisconnectIndication(indication);
-            _connections.InternalRemove(indication.Identifier.PLCI);
+            Connection connection = _connections.GetConnectionByPLCI(indication.Identifier.PLCI);
+            Debug.Assert(connection != null, "Connecion needs to exist at this point.");
             DisconnectResponse response = new DisconnectResponse(indication);
             _application.SendMessage(response);
-            _application.OnPhysicalConnectionDisconnected(new ConnectionEventArgs(indication, connection));
+            connection.Status = ConnectionStatus.Disconnected;
+            _connections.InternalRemove(indication.Identifier.PLCI);
+            connection.Dispose();
         }
 
         internal void ConnectIndication(ConnectIndication indication) {
-            Connection connection = new Connection(_application, this, indication.Identifier.PLCI, indication.CallingPartyNumber, indication.CalledPartyNumber);
-            _connections.InternalAdd(connection);
+            Connection connection = _connections.GetConnectionByPLCI(indication.Identifier.PLCI);
+            if (connection == null) {
+                connection = new Connection(_application,
+                    this,
+                    indication.Identifier.PLCI,
+                    indication.CallingPartyNumber,
+                    indication.CalledPartyNumber);
+                _connections.InternalAdd(connection);
+            }
 
-            ConnectResponse response = new ConnectResponse(indication);
+            AlertRequest request = new AlertRequest();
+            request.Identifier.Value = indication.Identifier.Value;
+            _application.SendMessage(request);
+
+            // Notify user application....
+            connection.Status = ConnectionStatus.D_ConnectPending;
+            // Notify user application....
 
             IncomingPhysicalConnectionEventArgs args = new IncomingPhysicalConnectionEventArgs(indication, connection);
             _application.OnIncomingPhysicalConnection(args);
-
-            if (args.Reject == Reject.Accept) {
-                if (_alert) {
-                    AlertInternal(indication.Identifier);
-                }
-                response.ConnectedNumber = indication.CalledPartyNumber;
-            }
-
-            response.Reject = args.Reject;
-            response.BPtotocol.B1 = B1Protocol.HDLC64BFN;
-            response.BPtotocol.B2 = B2Protocol.Transparent;
-
-            _application.SendMessage(response);
-            _application.OnPhysicalConnected(new ConnectionEventArgs(indication, connection));
+            _application.SendMessage(args.Response);
+            //_application.OnPhysicalConnected(new ConnectionEventArgs(indication, connection));
         }
 
     }
