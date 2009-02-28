@@ -4,25 +4,22 @@ namespace Mommosoft.Capi {
     using System.Text;
     using System.Collections.Specialized;
 
-    public class NCCIParameter : PLCIParameter {
-        protected static readonly BitVector32.Section NCCISection = BitVector32.CreateSection(short.MaxValue, PLCISection);
+    public class NCCIParameter : Parameter<uint> {
 
-        public NCCIParameter() : this(0) { }
+        public NCCIParameter() { }
+        public NCCIParameter(uint value) : base(value) { }
 
-        public NCCIParameter(int value) {
-            Value = value;
+        public uint ControllerID {
+            get { return (uint)((Value & (uint)0x000000FF)); }
         }
 
-        public short NCCI {
-            get {
-                BitVector32 vector = new BitVector32(Value);
-                return Convert.ToInt16(vector[NCCISection]);
-            }
-            set {
-                BitVector32 vector = new BitVector32(Value);
-                vector[NCCISection] = value;
-                Value = vector.Data;
-            }
+        public uint PLCI {
+            get { return (Value & (uint)0x0000FFFF); }
+        }
+
+        public uint NCCI {
+            get { return Value; }
+            set { Value = value; }
         }
 
     }

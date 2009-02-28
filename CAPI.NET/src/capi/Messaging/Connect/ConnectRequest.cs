@@ -5,15 +5,15 @@ using System.Text;
 namespace Mommosoft.Capi {
     [MessageIdentity(Command.Connect, SubCommand.Request)]
     public class ConnectRequest : RequestMessageBase<ControllerParameter> {
-        public ConnectRequest(int controller)
+        public ConnectRequest(uint controller)
             : base(new ControllerParameter()) {
             Identifier.Value = controller;
             // CIP Value
-            ParameterCollection.Add(new Parameter<short>());
+            ParameterCollection.Add(new Parameter<ushort>());
             // Called party number
             ParameterCollection.Add(new PrefixedStringParameter(new byte[] { 128 }));
             // Calling party number
-            ParameterCollection.Add(new PrefixedStringParameter(new byte[] { 0, 128 }));
+            ParameterCollection.Add(new PrefixedStringParameter(new byte[] { 1, 128 }));
             // Called party subaddress
             ParameterCollection.Add(new Parameter<string>());
             // Calling party subaddress
@@ -31,9 +31,9 @@ namespace Mommosoft.Capi {
 
         }
 
-        public short CIPValue {
-            get { return ((Parameter<short>)ParameterCollection[1]).Value; }
-            set { ((Parameter<short>)ParameterCollection[1]).Value = value; }
+        public ushort CIPValue {
+            get { return ((Parameter<ushort>)ParameterCollection[1]).Value; }
+            set { ((Parameter<ushort>)ParameterCollection[1]).Value = value; }
         }
 
         public string CalledPartyNumber {

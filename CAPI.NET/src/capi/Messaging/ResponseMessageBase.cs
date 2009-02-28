@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace Mommosoft.Capi {
-    public class ResponseMessageBase<T> : IdentifierMessageBase<T> where T : Parameter<int> {
+    public class ResponseMessageBase<T> : IdentifierMessageBase<T> where T : Parameter<uint> {
         protected ResponseMessageBase(T parameter, IndicationMessageBase<T> indication)
             : base(parameter) {
             Number = indication.Number;

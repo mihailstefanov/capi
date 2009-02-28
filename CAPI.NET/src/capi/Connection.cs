@@ -9,10 +9,11 @@ namespace Mommosoft.Capi {
     using System.Runtime.InteropServices;
 
     public partial class Connection : Component {
+        private const uint INVAL_NCCI = 0;
         private CapiApplication _application;
         private Controller _controller;
-        private byte _id;
-        private short _ncci;
+        private uint _plci;
+        private uint _ncci;
         private ConnectionStatus _status;
         private bool _dtfmListen;
         private short _dtfmDuration; //ms, defaule 40ms.
@@ -21,20 +22,23 @@ namespace Mommosoft.Capi {
         private string _callingPartyNumber;
         private string _calledPartyNumber;
         private object _tag;
+        private bool _inititator;
 
-        internal Connection(CapiApplication application, Controller controller, byte ID, string calledPartyNumber, string callingPartyNumber) {
+        internal Connection(CapiApplication application, Controller controller,
+            uint plci, string calledPartyNumber, string callingPartyNumber) {
+
             _dtfmDuration = 40;
             _dtfmPause = 40;
             _application = application;
             _controller = controller;
-            _id = ID;
+            _plci = plci;
             _calledPartyNumber = calledPartyNumber;
             _callingPartyNumber = callingPartyNumber;
-            _status = ConnectionStatus.WaitActivation;
+            _status = ConnectionStatus.Disconnected;
         }
 
-        public byte ID {
-            get { return _id; }
+        public uint PLCI {
+            get { return _plci; }
         }
 
         public CapiApplication Application {
@@ -44,8 +48,14 @@ namespace Mommosoft.Capi {
             get { return _controller; }
         }
 
-        private ConnectionStatus Status {
+        public ConnectionStatus Status {
             get { return _status; }
+            internal set { _status = value; }
+        }
+
+        public bool Inititator {
+            get { return _inititator; }
+            internal set { _inititator = value; }
         }
 
         public string CalledPartyNumber {
@@ -54,6 +64,10 @@ namespace Mommosoft.Capi {
 
         public string CallingPartyNumber {
             get { return _callingPartyNumber; }
+        }
+
+        public uint NCCI {
+            get { return _ncci; }
         }
 
         public object Tag {
@@ -102,10 +116,7 @@ namespace Mommosoft.Capi {
             request.DTMFFacilityRequestParameter.FacilityFunction = FacilityFunction.StartListen;
             request.DTMFFacilityRequestParameter.ToneDuration = _dtfmPause;
             request.DTMFFacilityRequestParameter.GapDuration = _dtfmPause;
-            PLCIParameter p = new PLCIParameter();
-            p.ControllerID = _controller.ID;
-            p.PLCI = _id;
-            request.Identifier.Value = p.Value;
+            request.Identifier.Value = _plci;
             RequestDTFM(request);
             _listen = true;
         }
@@ -116,17 +127,14 @@ namespace Mommosoft.Capi {
 
             request.FacilitySelector = FacilitySelector.DTMF;
             request.DTMFFacilityRequestParameter.FacilityFunction = FacilityFunction.StopListen;
-            PLCIParameter p = new PLCIParameter();
-            p.ControllerID = _controller.ID;
-            p.PLCI = _id;
-            request.Identifier.Value = p.Value;
+            request.Identifier.Value = _plci;
             RequestDTFM(request);
             _listen = false;
         }
 
         public void SendDTFMTone(string digits) {
             if (_status != ConnectionStatus.Connected)
-                throw new NotSupportedException();
+                throw Error.NotSupported();
 
             FacilityRequest request = new FacilityRequest();
 
@@ -135,10 +143,7 @@ namespace Mommosoft.Capi {
             request.DTMFFacilityRequestParameter.ToneDuration = _dtfmDuration;
             request.DTMFFacilityRequestParameter.GapDuration = _dtfmPause;
             request.DTMFFacilityRequestParameter.Digits = digits;
-            PLCIParameter p = new PLCIParameter();
-            p.ControllerID = _controller.ID;
-            p.PLCI = _id;
-            request.Identifier.Value = p.Value;
+            request.Identifier.Value = _plci;
             RequestDTFM(request);
         }
 
@@ -151,9 +156,7 @@ namespace Mommosoft.Capi {
             }
         }
 
-        private void RequestWaitCallback(object state) {
-            _application.SendRequestMessage((MessageAsyncResult)state);
-        }
+        #region Hangup
 
         public void HangUp() {
             try {
@@ -167,9 +170,22 @@ namespace Mommosoft.Capi {
 
         public IAsyncResult BeginHangUp(AsyncCallback callback, object state) {
             try {
-                if (_status != ConnectionStatus.Connected)
-                    throw new NotSupportedException();
-                DisconnectB3Request request = new DisconnectB3Request(_ncci);
+                Message request = null;
+                switch (_status) {
+                    case ConnectionStatus.Connected:
+                    case ConnectionStatus.B_ConnectPending:
+                        _inititator = true;
+                        request = new DisconnectB3Request(_ncci);
+                        break;
+                    case ConnectionStatus.D_Connected:
+                    case ConnectionStatus.D_ConnectPending:
+                    case ConnectionStatus.B_DisconnectPending:
+                        _inititator = true;
+                        request = new DisconnectRequest(_plci);
+                        break;
+                    default:
+                        throw Error.NotSupported();
+                }
                 MessageAsyncResult result = new MessageAsyncResult(this, request, callback, state);
                 _application.SendRequestMessage(result);
                 return result;
@@ -195,62 +211,10 @@ namespace Mommosoft.Capi {
             }
         }
 
-        short i = 0;
-        public IAsyncResult BeginWriteData(byte[] data, int startIndex, AsyncCallback callback, object state) {
-            IntPtr ptr = IntPtr.Zero;
-            try {
-                if (_status != ConnectionStatus.Connected)
-                    throw new NotSupportedException();
-                int length = data.Length - startIndex;
-                Debug.Assert(length <= short.MaxValue);
-                if (length >= short.MaxValue) throw new NotSupportedException();
-                ptr = Marshal.AllocHGlobal(length);
-                Marshal.Copy(data, startIndex, ptr, length);
-
-                DataB3Request request = new DataB3Request();
-                request.Identifier.ControllerID = _controller.ID;
-                request.Identifier.PLCI = _id;
-                request.Identifier.NCCI = _ncci;
-                request.Data = ptr;
-                request.DataLength = (short)length;
-                i++;
-                request.DataHandle = i;
-                MessageAsyncResult result = new MessageAsyncResult(this, request, callback, state);
-                _application.SendRequestMessage(result);
-                return result;
-            } catch (Exception e) {
-                Trace.TraceError("Connection#{0}::BeginWriteData, Exception = {1}", ValidationHelper.HashString(this), e);
-                // clean memory
-                if (ptr != IntPtr.Zero) {
-                    Marshal.FreeHGlobal(ptr);
-                }
-                throw;
-            }
-        }
-
-        public void EndWriteData(IAsyncResult asyncResult) {
-            try {
-                MessageAsyncResult result = asyncResult as MessageAsyncResult;
-                if (asyncResult == null || result == null) {
-                    throw (asyncResult == null) ? new ArgumentNullException("asyncResult") : new ArgumentException();
-                }
-                object o = result.InternalWaitForCompletion();
-                DataB3Request request = (DataB3Request)result.Request;
-                IntPtr ptr = request.Data;
-                if (ptr != IntPtr.Zero) {
-                    Marshal.FreeHGlobal(ptr);
-                }
-                if (o is Exception) {
-                    throw ((Exception)o);
-                }
-            } catch (Exception e) {
-                Trace.TraceError("Connection#{0}::EndWriteData, Exception = {1}", ValidationHelper.HashString(this), e);
-                throw;
-            }
-        }
+        #endregion HangUp
 
         public override string ToString() {
-            return string.Format("Connection {0} on Controller {1}", _id, _controller.ID);
+            return string.Format("Connection {0} on Controller {1}", _plci, _controller.ID);
         }
 
 
@@ -258,11 +222,13 @@ namespace Mommosoft.Capi {
             try {
                 ConnectActiveResponse response = new ConnectActiveResponse(indication);
                 _application.SendMessage(response);
-                _status = ConnectionStatus.WaitB3ProtocolActivation;
-                ConnectB3Request request = new ConnectB3Request();
-                request.Identifier.Value = response.Identifier.Value;
-                _application.SendMessage(request);
-                _application.OnPhysicalConnectionActive(new ConnectionEventArgs(indication, this));
+                _status = ConnectionStatus.D_Connected;
+                if (_inititator) {
+                    ConnectB3Request request = new ConnectB3Request();
+                    request.Identifier.Value = response.Identifier.Value;
+                    _application.SendMessage(request);
+                }
+                //_application.OnPhysicalConnectionActive(new ConnectionEventArgs(indication, this));
             } catch (Exception e) {
                 Trace.TraceError("Connection#{0}::ConnectActiveIndication, Exception = {1}", ValidationHelper.HashString(this), e);
                 throw;
@@ -271,12 +237,11 @@ namespace Mommosoft.Capi {
 
         internal void ConnectB3Indication(ConnectB3Indication indication) {
             try {
+                _ncci = indication.Identifier.NCCI;
                 ConnectB3Response response = new ConnectB3Response(indication);
                 IncomingLogicalConnectionEventArgs args = new IncomingLogicalConnectionEventArgs(indication, this, response);
-                _application.OnIncomingLogicalConnection(args);
-                _status = ConnectionStatus.ActivationB3Indication;
                 _application.SendMessage(response);
-
+                _status = ConnectionStatus.B_ConnectPending;
             } catch (Exception e) {
                 Trace.TraceError("Connection#{0}::ConnectB3Indication, Exception = {1}", ValidationHelper.HashString(this), e);
                 throw;
@@ -285,11 +250,10 @@ namespace Mommosoft.Capi {
 
         internal void ConnectB3ActiveIndication(ConnectB3ActiveIndication indication) {
             try {
-                _ncci = indication.Identifier.NCCI;
+                _inititator = false;
                 ConnectB3ActiveResponse response = new ConnectB3ActiveResponse(indication);
                 _application.SendMessage(response);
                 _status = ConnectionStatus.Connected;
-                _application.OnLogicalConnectionActive(new ConnectionEventArgs(indication, this));
             } catch (Exception e) {
                 Trace.TraceError("Connection#{0}::ConnectionB3ActiveIndication, Exception = {1}", ValidationHelper.HashString(this), e);
                 throw;
@@ -298,19 +262,18 @@ namespace Mommosoft.Capi {
 
         internal void DisconnectB3Indication(DisconnectB3Indication indication) {
             try {
+                _ncci = INVAL_NCCI;
                 DisconnectB3Response response = new DisconnectB3Response(indication);
                 _application.SendMessage(response);
-                _status = ConnectionStatus.Disconnecting;
-                _ncci = 0;
-                _application.OnLogicalConnectionDisconnected(new ConnectionEventArgs(indication, this));
+                _status = ConnectionStatus.D_Connected;
+                if (_inititator) {
+                    DisconnectRequest request = new DisconnectRequest(_plci);
+                    _application.SendMessage(request);
+                }
             } catch (Exception e) {
                 Trace.TraceError("Connection#{0}::DisconnectB3Indication, Exception = {1}", ValidationHelper.HashString(this), e);
                 throw;
             }
-        }
-
-        internal void DisconnectIndication(DisconnectIndication indication) {
-            _status = ConnectionStatus.Disconnected;
         }
 
         internal void FacilityIndication(FacilityIndication indication) {
@@ -326,11 +289,12 @@ namespace Mommosoft.Capi {
 
         internal void ConnectB3Confirmation(ConnectB3Confirmation confirmation, MessageAsyncResult result) {
             Trace.TraceInformation("Connection#{0}::ConnectB3Confirmation, Info = {0}", confirmation.Info);
-
-            if (confirmation.Succeeded) {
-                result.InvokeCallback();
-            } else {
-                result.InvokeCallback(new CapiException(confirmation.Info));
+            if (result != null) { // we are in listen mode.
+                if (confirmation.Succeeded) {
+                    result.InvokeCallback();
+                } else {
+                    result.InvokeCallback(new CapiException(confirmation.Info));
+                }
             }
         }
 
@@ -362,6 +326,22 @@ namespace Mommosoft.Capi {
             } else {
                 result.InvokeCallback(new CapiException(confirmation.Info));
             }
+        }
+
+        internal void AlertConfirmation(AlertConfirmation confirmation, MessageAsyncResult result) {
+            Trace.TraceInformation("Connection#{0}::AlertConfirmation, Info = {0}", confirmation.Info);
+
+            if (result != null) {
+                if (confirmation.Succeeded) {
+                    result.InvokeCallback();
+                } else {
+                    result.InvokeCallback(new CapiException(confirmation.Info));
+                }
+            }
+        }
+
+        private void RequestWaitCallback(object state) {
+            _application.SendRequestMessage((MessageAsyncResult)state);
         }
     }
 }

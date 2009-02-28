@@ -6,10 +6,8 @@
     [MessageIdentity(Command.DataB3, SubCommand.Confirmation)]
     public class DataB3Confirmation : ConformationMessageBase<NCCIParameter> {
         public DataB3Confirmation()
-            : base(new NCCIParameter()) {
+            : base(new NCCIParameter(), 2) {
             // Data Handle.
-            ParameterCollection.Add(new Parameter<short>());
-
             ParameterCollection.Add(new Parameter<short>());
         }
 
@@ -18,7 +16,9 @@
         }
 
         internal override void Notify(CapiApplication application, MessageAsyncResult result) {
-            throw new NotImplementedException();
-        }
+            Controller controller = application.GetControllerByID(Identifier.ControllerID);
+            Connection connection = controller.GetConnectionByPLCI(Identifier.PLCI);
+            connection.DataB3Confirmation(this, result);
+        } 
     }
 }

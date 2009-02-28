@@ -9,7 +9,7 @@ namespace Mommosoft.Capi {
             : base(controllers) {
         }
 
-        public Controller GetControllerByID(int controllerID) {
+        public Controller GetControllerByID(uint controllerID) {
             lock (this) {
                 foreach (Controller controller in this) {
                     if (controller.ID == controllerID)

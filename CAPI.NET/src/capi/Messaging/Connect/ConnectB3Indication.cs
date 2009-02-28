@@ -8,12 +8,16 @@ namespace Mommosoft.Capi {
         public ConnectB3Indication()
             : base(new NCCIParameter()) {
             // NCPI
-            ParameterCollection.Add(new Parameter<byte>());
+            if (IntPtr.Size == 4) {
+                ParameterCollection.Add(new Parameter<int>());
+            } else if (IntPtr.Size == 8) {
+                ParameterCollection.Add(new Parameter<Int64>());
+            }
         }
 
         internal override void Notify(CapiApplication application) {
             Controller ccontroller = application.GetControllerByID(Identifier.ControllerID);
-            Connection connection = ccontroller.GetConnectionByID(Identifier.PLCI);
+            Connection connection = ccontroller.GetConnectionByPLCI(Identifier.PLCI);
             connection.ConnectB3Indication(this);
         }
     }

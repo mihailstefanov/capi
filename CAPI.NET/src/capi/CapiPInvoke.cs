@@ -52,7 +52,7 @@ namespace Mommosoft.Capi {
             return code;
         }
 
-        public static NativeMethods.Profile GetProfile(int controller) {
+        public static NativeMethods.Profile GetProfile(uint controller) {
             NativeMethods.Profile profile = new NativeMethods.Profile();
             int code = NativeMethods.CAPI_GET_PROFILE(ref profile, controller);
             ValidateCode(code);

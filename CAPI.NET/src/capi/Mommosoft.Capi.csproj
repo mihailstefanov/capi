@@ -46,19 +46,23 @@
     <Compile Include="CapiApplicationEvents.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="CapiStreamWriter.cs" />
+    <Compile Include="ConnectionStream.cs" />
+    <Compile Include="ConnectionWriter.cs" />
     <Compile Include="Connection.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="ConnectionCollection.cs">
     </Compile>
     <Compile Include="ControllerCollection.cs" />
+    <Compile Include="Error.cs" />
+    <Compile Include="Events\DataArgs.cs" />
     <Compile Include="Events\IncomingLogicalConnectionEventArgs.cs">
     </Compile>
     <Compile Include="Events\ControllerEventArgs.cs" />
     <Compile Include="ControllerStatus.cs" />
     <Compile Include="Events\DTFMEventArgs.cs" />
     <Compile Include="Messaging\ControllerParameter.cs" />
+    <Compile Include="Messaging\Disconnect\DisconnectRequest.cs" />
     <Compile Include="Messaging\IndicationMessageBase.cs" />
     <Compile Include="Messaging\B1Protocol.cs" />
     <Compile Include="Messaging\B2Protocol.cs" />

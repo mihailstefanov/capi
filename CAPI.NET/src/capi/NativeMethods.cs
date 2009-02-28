@@ -94,7 +94,7 @@ namespace Mommosoft.Capi {
         }
 
         [DllImport(DllName, CharSet = CharSet.Ansi)]
-        public extern static int CAPI_GET_PROFILE(ref Profile profile, int controller);
+        public extern static int CAPI_GET_PROFILE(ref Profile profile, uint controller);
 
 
     }

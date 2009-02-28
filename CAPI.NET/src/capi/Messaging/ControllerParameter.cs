@@ -3,6 +3,6 @@
     using System.Collections.Generic;
     using System.Text;
 
-    public class ControllerParameter : Parameter<int> {
+    public class ControllerParameter : Parameter<uint> {
     }
 }

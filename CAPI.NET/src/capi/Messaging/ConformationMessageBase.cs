@@ -3,10 +3,17 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace Mommosoft.Capi {
-    public abstract class ConformationMessageBase<T> : IdentifierMessageBase<T> where T : Parameter<int> {
+    public abstract class ConformationMessageBase<T> : IdentifierMessageBase<T> where T : Parameter<uint> {
+        private int _infoIndex = 1;
+
         public ConformationMessageBase(T parameter)
             : base(parameter) {
             ParameterCollection.Add(new Parameter<short>());
+        }
+
+        public ConformationMessageBase(T parameter, int infoIndex)
+            : this(parameter) {
+            _infoIndex = infoIndex;
         }
 
         public T Identifier {
@@ -14,7 +21,7 @@ namespace Mommosoft.Capi {
         }
 
         public Info Info {
-            get { return ((Info)((Parameter<short>)ParameterCollection[1]).Value); }
+            get { return ((Info)((Parameter<short>)ParameterCollection[_infoIndex]).Value); }
         }
 
         public bool Succeeded {
