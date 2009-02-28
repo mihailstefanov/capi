@@ -3,15 +3,31 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mommosoft.Capi", "src\capi\Mommosoft.Capi.csproj", "{2FA2A238-C18C-436F-BFA6-D85B46C10D0E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{961F0D52-F114-4966-9630-843589280ABB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Phone", "Phone", "{1FDFF14B-15BA-448A-AF83-D0E5B3CCD904}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "capi", "capi", "{FCF32DC3-085A-46DE-9CDE-E26C37499E25}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Phone", "samples\Phone\Phone.csproj", "{20235EF7-F5E6-4231-88F8-DB365F0E3CEB}"
+EndProject
 Global
 	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 2
+		SccNumberOfProjects = 3
 		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
 		SccTeamFoundationServer = https://tfs07.codeplex.com/
 		SccLocalPath0 = .
 		SccProjectUniqueName1 = src\\capi\\Mommosoft.Capi.csproj
+		SccProjectTopLevelParentUniqueName1 = CAPI.NET.sln
 		SccProjectName1 = src/capi
 		SccLocalPath1 = src\\capi
+		SccProjectUniqueName2 = samples\\Phone\\Phone.csproj
+		SccProjectTopLevelParentUniqueName2 = CAPI.NET.sln
+		SccProjectName2 = samples/Phone
+		SccLocalPath2 = samples\\Phone
+	EndGlobalSection
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = CAPI.NET.vsmdi
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -22,8 +38,16 @@ Global
 		{2FA2A238-C18C-436F-BFA6-D85B46C10D0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2FA2A238-C18C-436F-BFA6-D85B46C10D0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2FA2A238-C18C-436F-BFA6-D85B46C10D0E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20235EF7-F5E6-4231-88F8-DB365F0E3CEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20235EF7-F5E6-4231-88F8-DB365F0E3CEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20235EF7-F5E6-4231-88F8-DB365F0E3CEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20235EF7-F5E6-4231-88F8-DB365F0E3CEB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{20235EF7-F5E6-4231-88F8-DB365F0E3CEB} = {1FDFF14B-15BA-448A-AF83-D0E5B3CCD904}
+		{2FA2A238-C18C-436F-BFA6-D85B46C10D0E} = {FCF32DC3-085A-46DE-9CDE-E26C37499E25}
 	EndGlobalSection
 EndGlobal
