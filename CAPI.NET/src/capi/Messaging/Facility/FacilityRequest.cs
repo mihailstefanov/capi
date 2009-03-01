@@ -5,12 +5,12 @@ namespace Mommosoft.Capi {
 
     [MessageIdentity(Command.Facility, SubCommand.Request)]
     public class FacilityRequest : RequestMessageBase<Parameter<uint>> {
-        public FacilityRequest()
+        public FacilityRequest(IParameter requestParmaeter)
             : base(new Parameter<uint>()) {
             // Facility selector
             ParameterCollection.Add(new Parameter<short>());
             // Facility Request Parameter 
-            ParameterCollection.Add(new DTMFFacilityRequestParameter());
+            ParameterCollection.Add(requestParmaeter);
         }
 
         public FacilitySelector FacilitySelector {
@@ -18,8 +18,8 @@ namespace Mommosoft.Capi {
             set { ((Parameter<short>)ParameterCollection[1]).Value = (short)value; }
         }
 
-        public DTMFFacilityRequestParameter DTMFFacilityRequestParameter {
-            get { return (DTMFFacilityRequestParameter)ParameterCollection[2]; }
+        public IParameter FacilityRequestParameter {
+            get { return ParameterCollection[2]; }
             set { ParameterCollection[2] = value; }
         }
     }

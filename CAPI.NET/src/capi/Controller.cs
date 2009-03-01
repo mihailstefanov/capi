@@ -18,7 +18,6 @@ namespace Mommosoft.Capi {
         private ControllerStatus _status;
 
         internal Controller(CapiApplication application, uint id) {
-            _connections = new ConnectionCollection();
             _application = application;
             _id = id;
             _status = ControllerStatus.Idle;
@@ -47,6 +46,9 @@ namespace Mommosoft.Capi {
 
         public ConnectionCollection Connections {
             get {
+                if (_connections == null) {
+                    _connections = new ConnectionCollection();
+                }
                 return _connections;
             }
         }
@@ -64,13 +66,13 @@ namespace Mommosoft.Capi {
         /// <param name="callingPartyNumber">our number</param>
         /// <param name="calledPartyNumber">called party number</param>
         /// <returns></returns>
-        public Connection Connect(string callingPartyNumber, string calledPartyNumber, int service,
+        public Connection Connect(string callingPartyNumber, string calledPartyNumber, CIPServices service,
             B1Protocol b1, B2Protocol b2, B3Protocol b3) {
             IAsyncResult asyncResult;
             try {
                 asyncResult = BeginConnect(callingPartyNumber, calledPartyNumber, service, b1, b2, b3, null, null);
                 if (((_timeout != -1) && !asyncResult.IsCompleted) && (!asyncResult.AsyncWaitHandle.WaitOne(_timeout, false) || !asyncResult.IsCompleted)) {
-                    throw new TimeoutException("Listen");
+                    throw new TimeoutException("Connect");
                 }
                 return EndConnect(asyncResult);
             } catch (Exception e) {
@@ -80,15 +82,16 @@ namespace Mommosoft.Capi {
         }
 
 
-        public IAsyncResult BeginConnect(string callingPartyNumber, string calledPartyNumber, int service,
+        public IAsyncResult BeginConnect(string callingPartyNumber, string calledPartyNumber, CIPServices service,
             B1Protocol b1, B2Protocol b2, B3Protocol b3, AsyncCallback callback, object state) {
             try {
                 ConnectRequest request = new ConnectRequest(_id);
                 UInt16 CIPValue = 0;
-                if (service != 0) {
+                int s = (int)service;
+                if (s != 0) {
                     do {
-                        if ((service & 1) != 0) break;
-                        service >>= 1;
+                        if ((s & 1) != 0) break;
+                        s >>= 1;
                         CIPValue++;
                     } while (CIPValue < 31);
                 }
@@ -134,10 +137,25 @@ namespace Mommosoft.Capi {
 
         #region Listen
 
-        public IAsyncResult BeginListen(CIPMask CIPMask, AsyncCallback callback, object state) {
+        public void Listen(CIPMask service) {
+            IAsyncResult asyncResult;
+            try {
+                asyncResult = BeginListen(service, null, null);
+                if (((_timeout != -1) && !asyncResult.IsCompleted) && (!asyncResult.AsyncWaitHandle.WaitOne(_timeout, false) || !asyncResult.IsCompleted)) {
+                    throw new TimeoutException("Listen");
+                }
+                EndListen(asyncResult);
+            } catch (Exception e) {
+                Trace.TraceError("Controller#{0}::Listen, Exception = {1}", ValidationHelper.HashString(this), e);
+                throw;
+
+            }
+        }
+
+        public IAsyncResult BeginListen(CIPMask service, AsyncCallback callback, object state) {
             try {
                 ListenRequest request = new ListenRequest(_id);
-                request.CIPMask = CIPMask;
+                request.CIPMask = service;
                 MessageAsyncResult result = new MessageAsyncResult(this, request, callback, state);
                 _application.SendRequestMessage(result);
                 return result;
@@ -161,21 +179,6 @@ namespace Mommosoft.Capi {
             } catch (Exception e) {
                 Trace.TraceError("Controller#{0}::EndListen, Exception = {1}", ValidationHelper.HashString(this), e);
                 throw;
-            }
-        }
-
-        public void Listen(CIPMask CIPMask) {
-            IAsyncResult asyncResult;
-            try {
-                asyncResult = BeginListen(CIPMask, null, null);
-                if (((_timeout != -1) && !asyncResult.IsCompleted) && (!asyncResult.AsyncWaitHandle.WaitOne(_timeout, false) || !asyncResult.IsCompleted)) {
-                    throw new TimeoutException("Listen");
-                }
-                EndListen(asyncResult);
-            } catch (Exception e) {
-                Trace.TraceError("Controller#{0}::Listen, Exception = {1}", ValidationHelper.HashString(this), e);
-                throw;
-
             }
         }
 
@@ -205,13 +208,6 @@ namespace Mommosoft.Capi {
             return protocolList;
         }
 
-
-        private void AlertInternal(PLCIParameter plci) {
-            AlertRequest alert = new AlertRequest();
-            alert.Identifier = plci;
-            _application.SendMessage(alert);
-        }
-
         internal void ListenConfirmation(ListenConfirmation confirmation, MessageAsyncResult result) {
             if (confirmation.Succeeded) {
                 result.InvokeCallback();
@@ -225,7 +221,9 @@ namespace Mommosoft.Capi {
 
                 ConnectRequest request = (ConnectRequest)result.Request;
                 Connection connection = new Connection(_application, this, confirmation.Identifier.PLCI, request.CalledPartyNumber, request.CallingPartyNumber);
-                _connections.InternalAdd(connection);
+                Connections.InternalAdd(connection);
+                connection.Status = ConnectionStatus.D_ConnectPending;
+                connection.Inititator = true;
                 result.InvokeCallback(connection);
                 _application.OnPhysicalConnected(new ConnectionEventArgs(confirmation, connection));
             } else {
@@ -233,25 +231,37 @@ namespace Mommosoft.Capi {
             }
         }
 
+        internal void AlertConfirmation(AlertConfirmation confirmation, MessageAsyncResult result) {
+            Trace.TraceInformation("Controller#{0}::AlertConfirmation, Info = {0}", confirmation.Info);
+
+            if (result != null) {
+                if (confirmation.Succeeded) {
+                    result.InvokeCallback();
+                } else {
+                    result.InvokeCallback(new CapiException(confirmation.Info));
+                }
+            }
+        }
+
         internal void DisconnectIndication(DisconnectIndication indication) {
-            Connection connection = _connections.GetConnectionByPLCI(indication.Identifier.PLCI);
+            Connection connection = Connections.GetConnectionByPLCI(indication.Identifier.PLCI);
             Debug.Assert(connection != null, "Connecion needs to exist at this point.");
             DisconnectResponse response = new DisconnectResponse(indication);
             _application.SendMessage(response);
             connection.Status = ConnectionStatus.Disconnected;
-            _connections.InternalRemove(indication.Identifier.PLCI);
+            Connections.InternalRemove(indication.Identifier.PLCI);
             connection.Dispose();
         }
 
         internal void ConnectIndication(ConnectIndication indication) {
-            Connection connection = _connections.GetConnectionByPLCI(indication.Identifier.PLCI);
+            Connection connection = Connections.GetConnectionByPLCI(indication.Identifier.PLCI);
             if (connection == null) {
                 connection = new Connection(_application,
                     this,
                     indication.Identifier.PLCI,
                     indication.CallingPartyNumber,
                     indication.CalledPartyNumber);
-                _connections.InternalAdd(connection);
+                Connections.InternalAdd(connection);
             }
 
             AlertRequest request = new AlertRequest();
@@ -267,7 +277,6 @@ namespace Mommosoft.Capi {
             _application.SendMessage(args.Response);
             //_application.OnPhysicalConnected(new ConnectionEventArgs(indication, connection));
         }
-
     }
 }
 

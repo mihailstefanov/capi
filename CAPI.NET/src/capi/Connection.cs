@@ -110,12 +110,13 @@ namespace Mommosoft.Capi {
 
         private void StartListenDTFM(object o) {
             Debug.Assert(!_listen);
-            FacilityRequest request = new FacilityRequest();
+            DTMFFacilityRequestParameter dtfmParam = new DTMFFacilityRequestParameter();
+            FacilityRequest request = new FacilityRequest(dtfmParam);
 
             request.FacilitySelector = FacilitySelector.DTMF;
-            request.DTMFFacilityRequestParameter.FacilityFunction = FacilityFunction.StartListen;
-            request.DTMFFacilityRequestParameter.ToneDuration = _dtfmPause;
-            request.DTMFFacilityRequestParameter.GapDuration = _dtfmPause;
+            dtfmParam.FacilityFunction = FacilityFunction.StartListen;
+            dtfmParam.ToneDuration = _dtfmPause;
+            dtfmParam.GapDuration = _dtfmPause;
             request.Identifier.Value = _plci;
             RequestDTFM(request);
             _listen = true;
@@ -123,10 +124,11 @@ namespace Mommosoft.Capi {
 
         private void StopListenDTFM(object o) {
             Debug.Assert(_listen);
-            FacilityRequest request = new FacilityRequest();
+            DTMFFacilityRequestParameter dtfmParam = new DTMFFacilityRequestParameter();
+            FacilityRequest request = new FacilityRequest(dtfmParam);
 
             request.FacilitySelector = FacilitySelector.DTMF;
-            request.DTMFFacilityRequestParameter.FacilityFunction = FacilityFunction.StopListen;
+            dtfmParam.FacilityFunction = FacilityFunction.StopListen;
             request.Identifier.Value = _plci;
             RequestDTFM(request);
             _listen = false;
@@ -136,13 +138,14 @@ namespace Mommosoft.Capi {
             if (_status != ConnectionStatus.Connected)
                 throw Error.NotSupported();
 
-            FacilityRequest request = new FacilityRequest();
+            DTMFFacilityRequestParameter dtfmParam = new DTMFFacilityRequestParameter();
+            FacilityRequest request = new FacilityRequest(dtfmParam);
 
             request.FacilitySelector = FacilitySelector.DTMF;
-            request.DTMFFacilityRequestParameter.FacilityFunction = FacilityFunction.Send;
-            request.DTMFFacilityRequestParameter.ToneDuration = _dtfmDuration;
-            request.DTMFFacilityRequestParameter.GapDuration = _dtfmPause;
-            request.DTMFFacilityRequestParameter.Digits = digits;
+            dtfmParam.FacilityFunction = FacilityFunction.Send;
+            dtfmParam.ToneDuration = _dtfmDuration;
+            dtfmParam.GapDuration = _dtfmPause;
+            dtfmParam.Digits = digits;
             request.Identifier.Value = _plci;
             RequestDTFM(request);
         }
@@ -289,12 +292,11 @@ namespace Mommosoft.Capi {
 
         internal void ConnectB3Confirmation(ConnectB3Confirmation confirmation, MessageAsyncResult result) {
             Trace.TraceInformation("Connection#{0}::ConnectB3Confirmation, Info = {0}", confirmation.Info);
-            if (result != null) { // we are in listen mode.
-                if (confirmation.Succeeded) {
-                    result.InvokeCallback();
-                } else {
-                    result.InvokeCallback(new CapiException(confirmation.Info));
-                }
+            if (confirmation.Succeeded) {
+                Status = ConnectionStatus.B_ConnectPending;
+                result.InvokeCallback();
+            } else {
+                result.InvokeCallback(new CapiException(confirmation.Info));
             }
         }
 
@@ -302,6 +304,16 @@ namespace Mommosoft.Capi {
             Trace.TraceInformation("Connection#{0}::FacilityConfirmation, Info = {0}", confirmation.Info);
 
             if (confirmation.Succeeded) {
+                result.InvokeCallback();
+            } else {
+                result.InvokeCallback(new CapiException(confirmation.Info));
+            }
+        }
+
+        internal void DisconnectConfirmation(DisconnectConfirmation confirmation, MessageAsyncResult result) {
+            Trace.TraceInformation("Connection#{0}::DisconnectConfirmation, Info = {0}", confirmation.Info);
+            if (confirmation.Succeeded) {
+                this.Status = ConnectionStatus.D_DisconnectPending;
                 result.InvokeCallback();
             } else {
                 result.InvokeCallback(new CapiException(confirmation.Info));
@@ -328,17 +340,6 @@ namespace Mommosoft.Capi {
             }
         }
 
-        internal void AlertConfirmation(AlertConfirmation confirmation, MessageAsyncResult result) {
-            Trace.TraceInformation("Connection#{0}::AlertConfirmation, Info = {0}", confirmation.Info);
-
-            if (result != null) {
-                if (confirmation.Succeeded) {
-                    result.InvokeCallback();
-                } else {
-                    result.InvokeCallback(new CapiException(confirmation.Info));
-                }
-            }
-        }
 
         private void RequestWaitCallback(object state) {
             _application.SendRequestMessage((MessageAsyncResult)state);

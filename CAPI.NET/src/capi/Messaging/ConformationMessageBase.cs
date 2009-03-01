@@ -8,7 +8,7 @@ namespace Mommosoft.Capi {
 
         public ConformationMessageBase(T parameter)
             : base(parameter) {
-            ParameterCollection.Add(new Parameter<short>());
+            ParameterCollection.Add(new Parameter<ushort>());
         }
 
         public ConformationMessageBase(T parameter, int infoIndex)
@@ -21,19 +21,23 @@ namespace Mommosoft.Capi {
         }
 
         public Info Info {
-            get { return ((Info)((Parameter<short>)ParameterCollection[_infoIndex]).Value); }
+            get { return ((Info)((Parameter<ushort>)ParameterCollection[_infoIndex]).Value); }
         }
 
         public bool Succeeded {
-            get { return Info == Info.Success; }
+            // Info's with value 0x00xx are only warnings, 
+            // the corresponding requests have been processed.
+            get { return (ushort)Info < 0x00FF; }
         }
 
         internal abstract void Notify(CapiApplication application, MessageAsyncResult result);
 
         internal override void Notify(CapiApplication application) {
             MessageAsyncResult result = application.GetMessageAsyncResult(Number);
-            Notify(application, result);
-            application.RemoveMessageAsyncResult(Number);
+            if (result != null) {
+                Notify(application, result);
+                application.RemoveMessageAsyncResult(Number);
+            }
         }
     }
 }

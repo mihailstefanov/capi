@@ -3,7 +3,7 @@ namespace Mommosoft.Capi {
     using System.Collections.Generic;
     using System.Text;
 
-    public enum Info : short {
+    public enum Info : ushort {
         Success = 0,
         /// <summary>
         /// Illegal controller.
