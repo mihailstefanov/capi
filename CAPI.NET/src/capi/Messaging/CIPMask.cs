@@ -4,7 +4,7 @@ namespace Mommosoft.Capi {
     using System.Text;
 
     [Flags]
-    public enum CIPMask {
+    public enum CIPMask : ushort {
         None = 0,
         AnyMatch = 1,
         Speech = 2,
@@ -18,7 +18,7 @@ namespace Mommosoft.Capi {
         Telephony = 2 ^ 16,
         Faxg3 = 2 ^ 17,
         Faxg4 = 2 ^ 18,
-        CIPMask_TeletexBasicMixed = 2 ^ 19,
+        TeletexBasicMixed = 2 ^ 19,
         TeletexBasicProcessable = 2 ^ 20,
         TeletexBasic = 2 ^ 21,
         Videotex = 2 ^ 22,

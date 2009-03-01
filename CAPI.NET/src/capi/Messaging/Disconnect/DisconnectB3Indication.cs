@@ -9,8 +9,12 @@ namespace Mommosoft.Capi {
 
         internal override void Notify(CapiApplication application) {
             Controller controller = application.Controllers.GetControllerByID(Identifier.ControllerID);
-            Connection connection = controller.Connections.GetConnectionByPLCI(Identifier.PLCI);
-            connection.DisconnectB3Indication(this);
+            if (controller != null) {
+                Connection connection = controller.Connections.GetConnectionByPLCI(Identifier.PLCI);
+                if (connection != null) {
+                    connection.DisconnectB3Indication(this);
+                }
+            }
         }
     }
 }

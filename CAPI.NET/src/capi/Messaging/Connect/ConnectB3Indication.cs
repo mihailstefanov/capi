@@ -8,11 +8,7 @@ namespace Mommosoft.Capi {
         public ConnectB3Indication()
             : base(new NCCIParameter()) {
             // NCPI
-            if (IntPtr.Size == 4) {
-                ParameterCollection.Add(new Parameter<int>());
-            } else if (IntPtr.Size == 8) {
-                ParameterCollection.Add(new Parameter<Int64>());
-            }
+            ParameterCollection.Add(new StructParameter());
         }
 
         internal override void Notify(CapiApplication application) {

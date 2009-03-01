@@ -28,6 +28,8 @@ namespace Mommosoft.Capi {
                 return (TypeSerializer<T>)(object)new ByteSerializer();
             } else if (c == typeof(short)) {
                 return (TypeSerializer<T>)(object)new WordSerializer();
+            } else if (c == typeof(ushort)) {
+                return (TypeSerializer<T>)(object)new UWordSerializer();
             } else if (c == typeof(int)) {
                 return (TypeSerializer<T>)(object)new DWordSerializer();
             } else if (c == typeof(uint)) {

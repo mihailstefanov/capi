@@ -17,4 +17,18 @@ namespace Mommosoft.Capi {
             return 2;
         }
     }
+
+    internal class UWordSerializer : TypeSerializer<ushort> {
+        public override ushort Read(BinaryReader reader) {
+            return reader.ReadUInt16();
+        }
+
+        public override void Write(BinaryWriter writer, ushort value) {
+            writer.Write(value);
+        }
+
+        public override byte GetLength(ushort value) {
+            return 2;
+        }
+    }
 }

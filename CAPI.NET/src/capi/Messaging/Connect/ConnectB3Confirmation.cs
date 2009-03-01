@@ -8,8 +8,7 @@ namespace Mommosoft.Capi {
         public ConnectB3Confirmation() : base(new NCCIParameter()) { }
 
         internal override void Notify(CapiApplication application, MessageAsyncResult result) {
-            Controller controller = application.GetControllerByID(Identifier.ControllerID);
-            Connection connection = controller.GetConnectionByPLCI(Identifier.PLCI);
+            Connection connection = (Connection)result.Caller;
             connection.ConnectB3Confirmation(this, result);
         }
     }

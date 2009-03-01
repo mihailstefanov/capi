@@ -10,6 +10,7 @@ namespace Mommosoft.Capi {
     public partial class CapiApplication : Component {
         private static short s_messageNumber = 0;
         private static object s_messageNumberLockObject = new object();
+        private static readonly TimeSpan MessageQueueTimeout = new TimeSpan(0, 0, 0, 10);
         private Thread _messageQueueThread;
         /// <summary>
         /// The maximum number of logical connections this application can maintain concurrently.
@@ -53,13 +54,20 @@ namespace Mommosoft.Capi {
 
         protected override void Dispose(bool disposing) {
             if (_appID != AppIDPlaceHolder) {
+                _run = false;
+                SendFakeListenRequest();
+                _messageQueueThread.Join(MessageQueueTimeout);
                 CapiPInvoke.Release(_appID);
                 _appID = AppIDPlaceHolder;
             }
             base.Dispose(disposing);
         }
 
-
+        private void SendFakeListenRequest() {
+            ListenRequest request = new ListenRequest(0);
+            request.CIPMask = CIPMask.None;
+            SendMessage(request);
+        }
 
         public int AppID {
             get { return _appID; }
@@ -150,7 +158,6 @@ namespace Mommosoft.Capi {
                 return CapiPInvoke.GetSerialNumber();
             }
         }
-
 
         private short GetUniqueMessageNumber() {
             lock (s_messageNumberLockObject) {

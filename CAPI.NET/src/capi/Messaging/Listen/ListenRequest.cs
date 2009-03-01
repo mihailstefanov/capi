@@ -9,24 +9,23 @@ namespace Mommosoft.Capi {
             : base(new ControllerParameter()) {
             Identifier.Value = controller;
 
-            Parameter<int> infoMask = new Parameter<int>();
-            infoMask.Value = 0x7F; ;
-            ParameterCollection.Add(infoMask);
+            // Info mask
+            ParameterCollection.Add(new Parameter<uint>());
 
-            Parameter<int> cipMask = new Parameter<int>();
-            cipMask.Value = 0x10012;
-            ParameterCollection.Add(cipMask);
+            // CIP Mask
+            ParameterCollection.Add(new Parameter<uint>());
 
-            //CIP Mask 2
+            // CIP Mask 2
             ParameterCollection.Add(new Parameter<int>());
 
+            // Calling party number
             ParameterCollection.Add(new PrefixedStringParameter(new byte[] { 0, 0x80 }));
             ParameterCollection.Add(new PrefixedStringParameter(new byte[] { 0x80 }));
         }
 
         public CIPMask CIPMask {
-            get { return (CIPMask)((Parameter<int>)(ParameterCollection[2])).Value; }
-            set { ((Parameter<int>)ParameterCollection[2]).Value = (int)value; }
+            get { return (CIPMask)((Parameter<uint>)(ParameterCollection[2])).Value; }
+            set { ((Parameter<uint>)ParameterCollection[2]).Value = (uint)value; }
         }
 
         public string CallingPartyNumber {
