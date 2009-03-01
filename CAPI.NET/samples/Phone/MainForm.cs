@@ -41,6 +41,7 @@ namespace Mommosoft.Capi.Phone {
 
         void OnIncomingPhysicalConnection(object sender, IncomingPhysicalConnectionEventArgs e) {
             if (listBoxInfo.InvokeRequired) {
+                // auto accpet the call... may be will be nice to have options like answer after 3th ring or ...
                 e.Reject = Reject.Accept;
                 e.B1Protocol = B1Protocol.HDLC64;
                 e.B2Protocol = B2Protocol.Transparent;
