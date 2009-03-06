@@ -6,6 +6,7 @@ namespace Mommosoft.Capi {
     using System.Threading;
     using System.IO;
     using System.Diagnostics;
+    using System.Runtime.InteropServices;
 
     public partial class CapiApplication : Component {
         private static short s_messageNumber = 0;
@@ -26,30 +27,34 @@ namespace Mommosoft.Capi {
         /// <summary>
         /// The maximum size of the application data block to be transmitted and received.
         /// </summary>
-        private const int MaxBDataLen = 128;
+        private const int MaxBDataLenght = 2048;
 
         private const int BlockLenght = 1024;
 
         private const int AppIDPlaceHolder = 0;
 
         private int _appID;
-
-        private int _bufferLength;
+        private readonly int _BDataLenght;
 
         private ControllerCollection _controllers;
-
         private CapiSerializer _serializer;
 
         private AsyncResultDictionary _asyncDictionary = new AsyncResultDictionary();
 
-        public CapiApplication() {
-            _bufferLength = GetBufferLenght(MaxLogicalConnection);
-            _appID = CapiPInvoke.Register(_bufferLength, MaxLogicalConnection, MaxBDataBlocks, MaxBDataLen);
+        public CapiApplication()
+            : this(GetBufferLenght(MaxLogicalConnection), MaxLogicalConnection, MaxBDataBlocks, MaxBDataLenght) {
+
+        }
+
+        public CapiApplication(int messageBufferLenght, int maxLogicalConnections, int maxBDataBlocks, int maxBDataLen) {
+            _BDataLenght = maxBDataLen;
+            _appID = CapiPInvoke.Register(messageBufferLenght, maxLogicalConnections, maxBDataBlocks, maxBDataLen);
             _serializer = new CapiSerializer(this);
             _messageQueueThread = new Thread(WaitForConfirmation);
             _messageQueueThread.IsBackground = true;
             _messageQueueThread.Name = string.Format("CAPI Application: {0} message queue", _appID);
             _messageQueueThread.Start();
+
         }
 
         protected override void Dispose(bool disposing) {
@@ -71,6 +76,10 @@ namespace Mommosoft.Capi {
 
         public int AppID {
             get { return _appID; }
+        }
+
+        public int BDataLenght {
+            get { return _BDataLenght; }
         }
 
         public ControllerCollection Controllers {
@@ -123,7 +132,7 @@ namespace Mommosoft.Capi {
         internal void RemoveMessageAsyncResult(short id) {
             _asyncDictionary.RemoveSafe(id);
         }
- 
+
         public void SendMessage(Message message) {
             using (MemoryStream stream = new MemoryStream()) {
                 if (message.Identity.SubCommand == SubCommand.Request && message.Number == 0) {
@@ -165,7 +174,7 @@ namespace Mommosoft.Capi {
             }
         }
 
-        private int GetBufferLenght(int logicalConnection) {
+        private static int GetBufferLenght(int logicalConnection) {
             return BlockLenght + (BlockLenght * logicalConnection);
         }
     }

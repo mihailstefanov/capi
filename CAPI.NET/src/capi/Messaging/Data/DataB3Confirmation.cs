@@ -9,6 +9,8 @@
             : base(new NCCIParameter(), 2) {
             // Data Handle.
             ParameterCollection.Add(new Parameter<short>());
+            // Info
+            ParameterCollection.Add(new Parameter<ushort>());
         }
 
         public short DataHandle {

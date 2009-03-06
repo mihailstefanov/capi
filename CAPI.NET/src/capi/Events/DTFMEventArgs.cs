@@ -6,8 +6,8 @@ namespace Mommosoft.Capi {
     public class DTFMEventArgs : ConnectionEventArgs {
         private readonly string _digits;
 
-        public DTFMEventArgs(FacilityIndication indication, Connection connection, string digits)
-            : base(indication, connection) {
+        public DTFMEventArgs(Connection connection, string digits)
+            : base(connection) {
             _digits = digits;
         }
 
