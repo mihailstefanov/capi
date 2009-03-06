@@ -37,9 +37,14 @@
             this.buttonDTFMStart = new System.Windows.Forms.Button();
             this.buttonDTFMStop = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.listBoxDTFMInfo = new System.Windows.Forms.ListBox();
-            this.textBoxDTFMChars = new System.Windows.Forms.TextBox();
             this.buttonDTFMSend = new System.Windows.Forms.Button();
+            this.textBoxDTFMChars = new System.Windows.Forms.TextBox();
+            this.listBoxDTFMInfo = new System.Windows.Forms.ListBox();
+            this.textBoxWaveFile = new System.Windows.Forms.TextBox();
+            this.openFileDialogWave = new System.Windows.Forms.OpenFileDialog();
+            this.buttonBrowseWave = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
             this.statusStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -77,9 +82,9 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(12, 23);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(60, 13);
+            this.label1.Size = new System.Drawing.Size(63, 13);
             this.label1.TabIndex = 3;
-            this.label1.Text = "Controllers";
+            this.label1.Text = "Controllers:";
             // 
             // statusStrip1
             // 
@@ -106,14 +111,14 @@
             // 
             // textBoxCalledNumber
             // 
-            this.textBoxCalledNumber.Location = new System.Drawing.Point(96, 61);
+            this.textBoxCalledNumber.Location = new System.Drawing.Point(99, 189);
             this.textBoxCalledNumber.Name = "textBoxCalledNumber";
             this.textBoxCalledNumber.Size = new System.Drawing.Size(121, 21);
             this.textBoxCalledNumber.TabIndex = 5;
             // 
             // buttonCall
             // 
-            this.buttonCall.Location = new System.Drawing.Point(235, 59);
+            this.buttonCall.Location = new System.Drawing.Point(238, 187);
             this.buttonCall.Name = "buttonCall";
             this.buttonCall.Size = new System.Drawing.Size(75, 23);
             this.buttonCall.TabIndex = 6;
@@ -124,7 +129,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 64);
+            this.label2.Location = new System.Drawing.Point(15, 192);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(45, 13);
             this.label2.TabIndex = 7;
@@ -132,7 +137,7 @@
             // 
             // buttonDisconnect
             // 
-            this.buttonDisconnect.Location = new System.Drawing.Point(316, 59);
+            this.buttonDisconnect.Location = new System.Drawing.Point(319, 187);
             this.buttonDisconnect.Name = "buttonDisconnect";
             this.buttonDisconnect.Size = new System.Drawing.Size(75, 23);
             this.buttonDisconnect.TabIndex = 8;
@@ -173,21 +178,6 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "DTFM";
             // 
-            // listBoxDTFMInfo
-            // 
-            this.listBoxDTFMInfo.FormattingEnabled = true;
-            this.listBoxDTFMInfo.Location = new System.Drawing.Point(7, 86);
-            this.listBoxDTFMInfo.Name = "listBoxDTFMInfo";
-            this.listBoxDTFMInfo.Size = new System.Drawing.Size(356, 147);
-            this.listBoxDTFMInfo.TabIndex = 11;
-            // 
-            // textBoxDTFMChars
-            // 
-            this.textBoxDTFMChars.Location = new System.Drawing.Point(7, 30);
-            this.textBoxDTFMChars.Name = "textBoxDTFMChars";
-            this.textBoxDTFMChars.Size = new System.Drawing.Size(156, 21);
-            this.textBoxDTFMChars.TabIndex = 12;
-            // 
             // buttonDTFMSend
             // 
             this.buttonDTFMSend.Location = new System.Drawing.Point(169, 30);
@@ -198,11 +188,69 @@
             this.buttonDTFMSend.UseVisualStyleBackColor = true;
             this.buttonDTFMSend.Click += new System.EventHandler(this.buttonDTFMSend_Click);
             // 
+            // textBoxDTFMChars
+            // 
+            this.textBoxDTFMChars.Location = new System.Drawing.Point(7, 30);
+            this.textBoxDTFMChars.Name = "textBoxDTFMChars";
+            this.textBoxDTFMChars.Size = new System.Drawing.Size(156, 21);
+            this.textBoxDTFMChars.TabIndex = 12;
+            // 
+            // listBoxDTFMInfo
+            // 
+            this.listBoxDTFMInfo.FormattingEnabled = true;
+            this.listBoxDTFMInfo.Location = new System.Drawing.Point(7, 86);
+            this.listBoxDTFMInfo.Name = "listBoxDTFMInfo";
+            this.listBoxDTFMInfo.Size = new System.Drawing.Size(356, 147);
+            this.listBoxDTFMInfo.TabIndex = 11;
+            // 
+            // textBoxWaveFile
+            // 
+            this.textBoxWaveFile.Location = new System.Drawing.Point(96, 50);
+            this.textBoxWaveFile.Name = "textBoxWaveFile";
+            this.textBoxWaveFile.Size = new System.Drawing.Size(214, 21);
+            this.textBoxWaveFile.TabIndex = 12;
+            // 
+            // openFileDialogWave
+            // 
+            this.openFileDialogWave.Filter = "Sound files (*.snd)|*.snd|All files (*.*)|*.*";
+            // 
+            // buttonBrowseWave
+            // 
+            this.buttonBrowseWave.Location = new System.Drawing.Point(319, 50);
+            this.buttonBrowseWave.Name = "buttonBrowseWave";
+            this.buttonBrowseWave.Size = new System.Drawing.Size(75, 23);
+            this.buttonBrowseWave.TabIndex = 13;
+            this.buttonBrowseWave.Text = "Browse";
+            this.buttonBrowseWave.UseVisualStyleBackColor = true;
+            this.buttonBrowseWave.Click += new System.EventHandler(this.buttonBrowseWave_Click);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(12, 55);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(76, 13);
+            this.label3.TabIndex = 14;
+            this.label3.Text = "Answer sound:";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(12, 79);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(244, 13);
+            this.label4.TabIndex = 15;
+            this.label4.Text = "Sound must be ISDN encoded a-Law, 8000Hz, Mono";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(809, 384);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.buttonBrowseWave);
+            this.Controls.Add(this.textBoxWaveFile);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.buttonDisconnect);
             this.Controls.Add(this.label2);
@@ -214,6 +262,7 @@
             this.Controls.Add(this.buttonListen);
             this.Controls.Add(this.comboBoxControllers);
             this.Font = new System.Drawing.Font("Calibri", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "MainForm";
             this.Text = "MainForm";
             this.statusStrip1.ResumeLayout(false);
@@ -244,5 +293,10 @@
         private System.Windows.Forms.ListBox listBoxDTFMInfo;
         private System.Windows.Forms.Button buttonDTFMSend;
         private System.Windows.Forms.TextBox textBoxDTFMChars;
+        private System.Windows.Forms.TextBox textBoxWaveFile;
+        private System.Windows.Forms.OpenFileDialog openFileDialogWave;
+        private System.Windows.Forms.Button buttonBrowseWave;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label4;
     }
 }
