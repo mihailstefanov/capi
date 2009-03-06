@@ -22,7 +22,7 @@ namespace Mommosoft.Capi {
         /// The maximum number of received data
         /// blocks that can be reported to the application simultaneously for each logical connection.
         /// </summary>
-        private const int MaxBDataBlocks = 2;
+        private const int MaxBDataBlocks = 7;
 
         /// <summary>
         /// The maximum size of the application data block to be transmitted and received.
