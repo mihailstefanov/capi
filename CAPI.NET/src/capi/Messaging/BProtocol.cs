@@ -43,7 +43,7 @@ namespace Mommosoft.Capi {
             writer.Write((Int16)_b1);
             writer.Write((Int16)_b2);
             writer.Write((Int16)_b3);
-            writer.Write(new byte[3]);
+            writer.Write(new byte[4]);
         }
     }
 }

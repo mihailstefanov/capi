@@ -12,7 +12,7 @@ namespace Mommosoft.Capi {
         }
 
         public ConformationMessageBase(T parameter, int infoIndex)
-            : this(parameter) {
+            : base(parameter) {
             _infoIndex = infoIndex;
         }
 

@@ -1,10 +1,14 @@
-﻿namespace Mommosoft.Capi {
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
-    using System.Diagnostics;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Diagnostics;
+
+namespace Mommosoft.Capi {
 
     partial class CapiApplication {
+
+        #region IncomingPhysicalConnection
+
         public event EventHandler<IncomingPhysicalConnectionEventArgs> IncomingPhysicalConnection;
 
         internal void OnIncomingPhysicalConnection(IncomingPhysicalConnectionEventArgs e) {
@@ -17,76 +21,25 @@
             }
         }
 
-        public event EventHandler<ConnectionEventArgs> PhysicalConnected;
+        #endregion IncomingPhysicalConnection
 
-        internal void OnPhysicalConnected(ConnectionEventArgs e) {
-            if (PhysicalConnected != null) {
+        #region ConnectionStatusChanged
+
+        public event EventHandler<ConnectionEventArgs> ConnectionStatusChanged;
+
+        internal void OnConnectionStatusChanged(ConnectionEventArgs e) {
+            if (ConnectionStatusChanged != null) {
                 try {
-                    PhysicalConnected(this, e);
+                    ConnectionStatusChanged(this, e);
                 } catch (Exception ex) {
-                    Trace.TraceError("CapiApplication#{0}::OnPhysicalConnected, Exception = {1}", ValidationHelper.HashString(this), ex);
+                    Trace.TraceError("CapiApplication#{0}::OnConnectionStatusChanged, Exception = {1}", ValidationHelper.HashString(this), ex);
                 }
             }
         }
 
-        public event EventHandler<ConnectionEventArgs> PhysicalConnectionActive;
+        #endregion ConnectionStatusChanged
 
-        internal void OnPhysicalConnectionActive(ConnectionEventArgs e) {
-            if (PhysicalConnectionActive != null) {
-                try {
-                    PhysicalConnectionActive(this, e);
-                } catch (Exception ex) {
-                    Trace.TraceError("CapiApplication#{0}::OnPhysicalConnectionActive, Exception = {1}", ValidationHelper.HashString(this), ex);
-                }
-            }
-        }
-
-        public event EventHandler<IncomingLogicalConnectionEventArgs> IncomingLogicalConnection;
-
-        internal void OnIncomingLogicalConnection(IncomingLogicalConnectionEventArgs e) {
-            if (IncomingLogicalConnection != null) {
-                try {
-                    IncomingLogicalConnection(this, e);
-                } catch (Exception ex) {
-                    Trace.TraceError("CapiApplication#{0}::OnIncomingLogicalConnection, Exception = {1}", ValidationHelper.HashString(this), ex);
-                }
-            }
-        }
-
-        public event EventHandler<ConnectionEventArgs> LogicalConnectionActive;
-
-        internal void OnLogicalConnectionActive(ConnectionEventArgs e) {
-            if (LogicalConnectionActive != null) {
-                try {
-                    LogicalConnectionActive(this, e);
-                } catch (Exception ex) {
-                    Trace.TraceError("CapiApplication#{0}::OnLogicalConnectionActive, Exception = {1}", ValidationHelper.HashString(this), ex);
-                }
-            }
-        }
-
-        public event EventHandler<ConnectionEventArgs> LogicalConnectionDisconnected;
-
-        internal void OnLogicalConnectionDisconnected(ConnectionEventArgs e) {
-            if (LogicalConnectionDisconnected != null) {
-                try {
-                    LogicalConnectionDisconnected(this, e);
-                } catch (Exception ex) {
-                    Trace.TraceError("CapiApplication#{0}::OnLogicalConnectionDisconnected, Exception = {1}", ValidationHelper.HashString(this), ex);
-                }
-            }
-        }
-        public event EventHandler<ConnectionEventArgs> PhysicalConnectionDisconnected;
-
-        internal void OnPhysicalConnectionDisconnected(ConnectionEventArgs e) {
-            if (PhysicalConnectionDisconnected != null) {
-                try {
-                    PhysicalConnectionDisconnected(this, e);
-                } catch (Exception ex) {
-                    Trace.TraceError("CapiApplication#{0}::OnPhysicalConnectionDisconnected, Exception = {1}", ValidationHelper.HashString(this), ex);
-                }
-            }
-        }
+        #region DTFMIndication
 
         public event EventHandler<DTFMEventArgs> DTFMIndication;
 
@@ -99,5 +52,7 @@
                 }
             }
         }
+
+        #endregion DTFMIndication
     }
 }

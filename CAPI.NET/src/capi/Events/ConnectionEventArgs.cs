@@ -3,10 +3,11 @@ namespace Mommosoft.Capi {
     using System.Collections.Generic;
     using System.Text;
 
-    public class ConnectionEventArgs : MessageEventArgs {
+    [Serializable]
+    public class ConnectionEventArgs : EventArgs {
         private readonly Connection _connection;
-        public ConnectionEventArgs(Message message, Connection connection)
-            : base(message) {
+
+        public ConnectionEventArgs(Connection connection) {
             _connection = connection;
         }
 

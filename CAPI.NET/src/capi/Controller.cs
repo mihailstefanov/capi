@@ -222,10 +222,9 @@ namespace Mommosoft.Capi {
                 ConnectRequest request = (ConnectRequest)result.Request;
                 Connection connection = new Connection(_application, this, confirmation.Identifier.PLCI, request.CalledPartyNumber, request.CallingPartyNumber);
                 Connections.InternalAdd(connection);
-                connection.Status = ConnectionStatus.D_ConnectPending;
                 connection.Inititator = true;
+                connection.Status = ConnectionStatus.D_ConnectPending;
                 result.InvokeCallback(connection);
-                _application.OnPhysicalConnected(new ConnectionEventArgs(confirmation, connection));
             } else {
                 result.InvokeCallback(new CapiException(confirmation.Info));
             }
@@ -270,12 +269,10 @@ namespace Mommosoft.Capi {
 
             // Notify user application....
             connection.Status = ConnectionStatus.D_ConnectPending;
-            // Notify user application....
 
             IncomingPhysicalConnectionEventArgs args = new IncomingPhysicalConnectionEventArgs(indication, connection);
             _application.OnIncomingPhysicalConnection(args);
             _application.SendMessage(args.Response);
-            //_application.OnPhysicalConnected(new ConnectionEventArgs(indication, connection));
         }
     }
 }

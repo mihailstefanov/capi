@@ -7,7 +7,7 @@ namespace Mommosoft.Capi {
         private ConnectResponse _response;
 
         internal IncomingPhysicalConnectionEventArgs(ConnectIndication indication, Connection connection)
-            : base(indication, connection) {
+            : base(connection) {
             _response = new ConnectResponse(indication);
             _response.ConnectedNumber = connection.CalledPartyNumber;
         }

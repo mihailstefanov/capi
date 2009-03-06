@@ -50,7 +50,10 @@ namespace Mommosoft.Capi {
 
         public ConnectionStatus Status {
             get { return _status; }
-            internal set { _status = value; }
+            internal set {
+                _status = value; 
+                _application.OnConnectionStatusChanged(new ConnectionEventArgs(this));
+            }
         }
 
         public bool Inititator {
@@ -100,6 +103,31 @@ namespace Mommosoft.Capi {
         }
 
 
+        public void SendDTFMTone(string digits) {
+            if (_status != ConnectionStatus.Connected)
+                throw Error.NotSupported();
+
+            DTMFFacilityRequestParameter dtfmParam = new DTMFFacilityRequestParameter();
+            FacilityRequest request = new FacilityRequest(dtfmParam);
+
+            request.FacilitySelector = FacilitySelector.DTMF;
+            dtfmParam.FacilityFunction = FacilityFunction.Send;
+            dtfmParam.ToneDuration = _dtfmDuration;
+            dtfmParam.GapDuration = _dtfmPause;
+            dtfmParam.Digits = digits;
+            request.Identifier.Value = _plci;
+            RequestDTFM(request);
+        }
+
+        private void RequestDTFM(FacilityRequest request) {
+            MessageAsyncResult result = new MessageAsyncResult(this, request, null, null);
+            ThreadPool.QueueUserWorkItem(RequestWaitCallback, result);
+            object o = result.InternalWaitForCompletion();
+            if (o is Exception) {
+                throw ((Exception)o);
+            }
+        }
+
         private void UpdateDTFMState() {
 
             if (_dtfmListen && !_listen)
@@ -132,31 +160,6 @@ namespace Mommosoft.Capi {
             request.Identifier.Value = _plci;
             RequestDTFM(request);
             _listen = false;
-        }
-
-        public void SendDTFMTone(string digits) {
-            if (_status != ConnectionStatus.Connected)
-                throw Error.NotSupported();
-
-            DTMFFacilityRequestParameter dtfmParam = new DTMFFacilityRequestParameter();
-            FacilityRequest request = new FacilityRequest(dtfmParam);
-
-            request.FacilitySelector = FacilitySelector.DTMF;
-            dtfmParam.FacilityFunction = FacilityFunction.Send;
-            dtfmParam.ToneDuration = _dtfmDuration;
-            dtfmParam.GapDuration = _dtfmPause;
-            dtfmParam.Digits = digits;
-            request.Identifier.Value = _plci;
-            RequestDTFM(request);
-        }
-
-        private void RequestDTFM(FacilityRequest request) {
-            MessageAsyncResult result = new MessageAsyncResult(this, request, null, null);
-            ThreadPool.QueueUserWorkItem(RequestWaitCallback, result);
-            object o = result.InternalWaitForCompletion();
-            if (o is Exception) {
-                throw ((Exception)o);
-            }
         }
 
         #region Hangup
@@ -225,7 +228,7 @@ namespace Mommosoft.Capi {
             try {
                 ConnectActiveResponse response = new ConnectActiveResponse(indication);
                 _application.SendMessage(response);
-                _status = ConnectionStatus.D_Connected;
+                Status = ConnectionStatus.D_Connected;
                 if (_inititator) {
                     ConnectB3Request request = new ConnectB3Request();
                     request.Identifier.Value = response.Identifier.Value;
@@ -242,9 +245,8 @@ namespace Mommosoft.Capi {
             try {
                 _ncci = indication.Identifier.NCCI;
                 ConnectB3Response response = new ConnectB3Response(indication);
-                IncomingLogicalConnectionEventArgs args = new IncomingLogicalConnectionEventArgs(indication, this, response);
                 _application.SendMessage(response);
-                _status = ConnectionStatus.B_ConnectPending;
+                Status = ConnectionStatus.B_ConnectPending;
             } catch (Exception e) {
                 Trace.TraceError("Connection#{0}::ConnectB3Indication, Exception = {1}", ValidationHelper.HashString(this), e);
                 throw;
@@ -254,9 +256,12 @@ namespace Mommosoft.Capi {
         internal void ConnectB3ActiveIndication(ConnectB3ActiveIndication indication) {
             try {
                 _inititator = false;
+                if (_ncci == INVAL_NCCI) {
+                    _ncci = indication.Identifier.NCCI;
+                }
                 ConnectB3ActiveResponse response = new ConnectB3ActiveResponse(indication);
                 _application.SendMessage(response);
-                _status = ConnectionStatus.Connected;
+                Status = ConnectionStatus.Connected;
             } catch (Exception e) {
                 Trace.TraceError("Connection#{0}::ConnectionB3ActiveIndication, Exception = {1}", ValidationHelper.HashString(this), e);
                 throw;
@@ -268,11 +273,11 @@ namespace Mommosoft.Capi {
                 _ncci = INVAL_NCCI;
                 DisconnectB3Response response = new DisconnectB3Response(indication);
                 _application.SendMessage(response);
-                _status = ConnectionStatus.D_Connected;
+                Status = ConnectionStatus.D_Connected;
                 if (_inititator) {
                     DisconnectRequest request = new DisconnectRequest(_plci);
                     _application.SendMessage(request);
-                }
+                } 
             } catch (Exception e) {
                 Trace.TraceError("Connection#{0}::DisconnectB3Indication, Exception = {1}", ValidationHelper.HashString(this), e);
                 throw;
@@ -283,7 +288,7 @@ namespace Mommosoft.Capi {
             Trace.TraceInformation("Connection#{0}::FacilityIndication, Digits = {0}", indication.Digits);
 
             try {
-                _application.OnDTFMIndication(new DTFMEventArgs(indication, this, indication.Digits));
+                _application.OnDTFMIndication(new DTFMEventArgs(this, indication.Digits));
             } catch (Exception e) {
                 Trace.TraceError("Connection#{0}::FacilityIndication, Exception = {1}", ValidationHelper.HashString(this), e);
                 throw;
@@ -293,6 +298,7 @@ namespace Mommosoft.Capi {
         internal void ConnectB3Confirmation(ConnectB3Confirmation confirmation, MessageAsyncResult result) {
             Trace.TraceInformation("Connection#{0}::ConnectB3Confirmation, Info = {0}", confirmation.Info);
             if (confirmation.Succeeded) {
+                _ncci = confirmation.Identifier.NCCI;
                 Status = ConnectionStatus.B_ConnectPending;
                 result.InvokeCallback();
             } else {
