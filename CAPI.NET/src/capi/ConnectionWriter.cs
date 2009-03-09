@@ -4,66 +4,81 @@
     using System.Text;
     using System.IO;
     using System.Diagnostics;
+    using System.Threading;
 
-    public class ConnectionWriter {
+    public class ConnectionWriter : IDisposable {
         ////max packet size for this application, 2048 bytes seems to be CAPI maximum.
-        //private const int MaxBufferSize = 128;
-        //private Connection _connection;
+        private ConnectionStream _outStream;
+        private int _BDataLenght;
+        private int _BDataBlocks;
 
-        //private class StateObject {
-        //    public Stream Stream;
-        //}
+        private class StateObject {
+            public Stream Stream;
+            public Semaphore SyncObject;
+        }
 
-        //public ConnectionWriter(Connection connection) {
-        //    _connection = connection;
-        //}
+        public ConnectionWriter(ConnectionStream stream) {
+            if (stream == null) throw new ArgumentNullException("stream");
+            _outStream = stream;
+            _BDataBlocks = _outStream.Connection.Application.BDataBlocks;
+            _BDataLenght = _outStream.Connection.Application.BDataLenght;
+        }
 
-        //public void Write(string filename) {
-        //    FileStream stream = File.OpenRead(filename);
-        //    Write(stream);
-        //}
+        public ConnectionWriter(ConnectionStream stream, int BDataBlocks, int BDataLenght) {
+            if (stream == null) throw new ArgumentNullException("stream");
+            if (BDataBlocks <= 0) throw new ArgumentException("BDataBlocks");
+            if (BDataLenght <= 0) throw new ArgumentException("BDataLenght");
+            _outStream = stream;
+            _BDataBlocks = BDataBlocks;
+            _BDataLenght = BDataLenght;
+        }
 
-        //public void Write(Stream stream) {
-        //    StateObject o = new StateObject();
-        //    o.Stream = stream;
-        //    byte[] bytes = StreamToBytes(stream);
-        //    if (bytes.Length != 0) {
-        //        _connection.BeginWriteData(bytes, 0, EndWriteAsyncCallback, o);
-        //    }
-        //}
-       
-        //protected static byte[] StreamToBytes(Stream stream) {
+        public void Close() {
+            Dispose(true);
+        }
 
-        //    if (stream.Length == 0 || stream.Position == stream.Length) {
-        //        return new byte[0];
-        //    }
-        //    int length = ((int)stream.Length < MaxBufferSize) ? (int)stream.Length : MaxBufferSize;
-        //    byte[] buffer = new byte[MaxBufferSize];
-        //    stream.Read(buffer, 0, buffer.Length);
-        //    return buffer;
-        //}
+        void IDisposable.Dispose() {
+            Dispose(true);
+        }
 
+        protected virtual void Dispose(bool disposing) {
+            if (disposing) {
+                _outStream.Close();
+            }
+        }
 
+        public void Write(string filename) {
+            using (FileStream stream = File.OpenRead(filename)) {
+                Write(stream);
+            }
+        }
 
-        //private void EndWriteAsyncCallback(IAsyncResult asyncResult) {
-        //    StateObject o = null;
-        //    MessageAsyncResult result = asyncResult as MessageAsyncResult;
-        //    if (result != null) {
-        //        try {
-        //            o = (StateObject)asyncResult.AsyncState;
-        //            byte[] bytes = StreamToBytes(o.Stream);
-        //            if (bytes.Length != 0) {
-        //                _connection.BeginWriteData(bytes, 0, EndWriteAsyncCallback, o);
-        //            } else {
-        //                o.Stream.Close();
-        //            }
-        //        } catch (Exception e) {
-        //            if (o != null && o.Stream != null) {
-        //                o.Stream.Close();
-        //            }
-        //            Trace.TraceError("CapiStreamWriter#{0}::EndWriteAsyncCallback, Exception = {1}", ValidationHelper.HashString(this), e);
-        //        }
-        //    }
-        //}
+        public void Write(Stream stream) {
+            using (Semaphore syncObject = new Semaphore(_BDataBlocks, _BDataBlocks)) {
+                StateObject state = new StateObject();
+                state.Stream = _outStream;
+                state.SyncObject = syncObject;
+
+                byte[] buf = new byte[_BDataLenght];
+                int bytesRead = stream.Read(buf, 0, buf.Length);
+                while (bytesRead > 0) {
+                    IAsyncResult result = _outStream.BeginWrite(buf, 0, bytesRead, EndWriteAsyncCallback,
+                        state);
+                    syncObject.WaitOne();
+                    bytesRead = stream.Read(buf, 0, buf.Length);
+                }
+            }
+        }
+
+        private static void EndWriteAsyncCallback(IAsyncResult result) {
+            StateObject state = result.AsyncState as StateObject;
+            try {
+                state.Stream.EndWrite(result);
+            } catch (Exception e) {
+                Trace.TraceError("ConnectionWrite::EndWriteAsyncCallback, Exception = {0}", e);
+            }
+            state.SyncObject.Release();
+        }
+
     }
 }

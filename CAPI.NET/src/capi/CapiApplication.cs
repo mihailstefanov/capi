@@ -35,7 +35,7 @@ namespace Mommosoft.Capi {
 
         private int _appID;
         private readonly int _BDataLenght;
-
+        private readonly int _BDataBlocks;
         private ControllerCollection _controllers;
         private CapiSerializer _serializer;
 
@@ -47,7 +47,9 @@ namespace Mommosoft.Capi {
         }
 
         public CapiApplication(int messageBufferLenght, int maxLogicalConnections, int maxBDataBlocks, int maxBDataLen) {
+            _BDataBlocks = maxBDataBlocks;
             _BDataLenght = maxBDataLen;
+
             _appID = CapiPInvoke.Register(messageBufferLenght, maxLogicalConnections, maxBDataBlocks, maxBDataLen);
             _serializer = new CapiSerializer(this);
             _messageQueueThread = new Thread(WaitForConfirmation);
@@ -80,6 +82,10 @@ namespace Mommosoft.Capi {
 
         public int BDataLenght {
             get { return _BDataLenght; }
+        }
+
+        public int BDataBlocks {
+            get { return _BDataBlocks; }
         }
 
         public ControllerCollection Controllers {
