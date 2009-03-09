@@ -7,19 +7,15 @@ using System.Runtime.InteropServices;
 
 namespace Mommosoft.Capi {
     public class ConnectionStream : Stream {
-        //max packet size for this application, 2048 bytes seems to be CAPI maximum.
-        private const int MaxBufferSize = 2048;
         private Connection _connection;
-
-        //private class StateObject {
-        //    public byte[] Source;
-        //    public int Position;
-        //    public int Count;
-        //}
 
         public ConnectionStream(Connection connection) {
             if (connection == null) throw new ArgumentNullException("connection");
             _connection = connection;
+        }
+
+        public Connection Connection {
+            get { return _connection; }
         }
 
         public override bool CanRead {
