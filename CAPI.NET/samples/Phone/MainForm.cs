@@ -38,7 +38,7 @@ namespace Mommosoft.Capi.Phone {
         // because of deadlock which can happen if we initiate the call ( pressing Call button).
         void OnConnectionStatusChangedInternal(object sender, ConnectionEventArgs e) {
             EventHandler<ConnectionEventArgs> d = new EventHandler<ConnectionEventArgs>(OnConnectionStatusChanged);
-            if(e.Connection.Status == ConnectionStatus.Connected && !string.IsNullOrEmpty(_answerSoundFileName))
+            if (e.Connection.Status == ConnectionStatus.Connected && !string.IsNullOrEmpty(_answerSoundFileName))
                 ThreadPool.QueueUserWorkItem(SendFile, e.Connection);
             d.BeginInvoke(sender, e, null, null);
 
@@ -135,56 +135,9 @@ namespace Mommosoft.Capi.Phone {
             Connection c = (Connection)obj;
             ConnectionStream stream = new ConnectionStream(c);
             using (FileStream fs = File.OpenRead(_answerSoundFileName)) {
-                CopyBytes(fs, stream, 2048, false,c);
-            }
-        }
-
-        private class WriteStatus {
-            public WriteStatus(Stream stream, Queue<IAsyncResult> results) {
-                Stream = stream;
-                Results = results;
-            }
-
-            public Stream Stream;
-            public Queue<IAsyncResult> Results; 
-        }
-
-        // idea is to send few request by time, this need some more work
-        public static void CopyBytes(Stream input, Stream output, int buffSize, bool close, Connection c) {
-            byte[] buf = new byte[buffSize];
-            Queue<IAsyncResult> results = new Queue<IAsyncResult>();
-            try {
-
-                int bytesRead = input.Read(buf, 0, buf.Length);
-                while (bytesRead > 0) {
-                    if (results.Count < 5) {
-                        if (c.Status != ConnectionStatus.Connected) return;
-                        IAsyncResult result = output.BeginWrite(buf, 0, bytesRead, OnBytesWritten, new WriteStatus(output, results));
-                        lock (results) {
-                            results.Enqueue(result);
-                        }
-                        //output.Write(buf, 0, bytesRead);
-                        bytesRead = input.Read(buf, 0, buf.Length);
-                    }
-                    Thread.Sleep(100);
+                using (ConnectionWriter writer = new ConnectionWriter(stream)) {
+                    writer.Write(fs);
                 }
-            } finally {
-                if (close) {
-                    output.Close();
-                    input.Close();
-                }
-
-            }
-        }
-
-        private static void OnBytesWritten(IAsyncResult result)
-        {
-            WriteStatus status = result.AsyncState as WriteStatus;
-            try {
-                status.Stream.EndWrite(result);
-            } catch { }
-            lock (status.Results) {
-                status.Results.Dequeue();
             }
         }
     }
