@@ -45,6 +45,9 @@
             this.buttonBrowseWave = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
+            this.textBoxTextToSpeak = new System.Windows.Forms.TextBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.buttonSpeak = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -131,9 +134,9 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(15, 192);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(45, 13);
+            this.label2.Size = new System.Drawing.Size(48, 13);
             this.label2.TabIndex = 7;
-            this.label2.Text = "Number";
+            this.label2.Text = "Number:";
             // 
             // buttonDisconnect
             // 
@@ -242,11 +245,40 @@
             this.label4.TabIndex = 15;
             this.label4.Text = "Sound must be ISDN encoded a-Law, 8000Hz, Mono";
             // 
+            // textBoxTextToSpeak
+            // 
+            this.textBoxTextToSpeak.Location = new System.Drawing.Point(96, 127);
+            this.textBoxTextToSpeak.Name = "textBoxTextToSpeak";
+            this.textBoxTextToSpeak.Size = new System.Drawing.Size(214, 21);
+            this.textBoxTextToSpeak.TabIndex = 16;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(9, 130);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(70, 13);
+            this.label5.TabIndex = 17;
+            this.label5.Text = "Text to speak:";
+            // 
+            // buttonSpeak
+            // 
+            this.buttonSpeak.Location = new System.Drawing.Point(319, 125);
+            this.buttonSpeak.Name = "buttonSpeak";
+            this.buttonSpeak.Size = new System.Drawing.Size(75, 23);
+            this.buttonSpeak.TabIndex = 18;
+            this.buttonSpeak.Text = "Speak";
+            this.buttonSpeak.UseVisualStyleBackColor = true;
+            this.buttonSpeak.Click += new System.EventHandler(this.buttonSpeak_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(809, 384);
+            this.Controls.Add(this.buttonSpeak);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.textBoxTextToSpeak);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.buttonBrowseWave);
@@ -298,5 +330,8 @@
         private System.Windows.Forms.Button buttonBrowseWave;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TextBox textBoxTextToSpeak;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Button buttonSpeak;
     }
 }
