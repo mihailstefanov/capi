@@ -8,11 +8,15 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using System.Threading;
+using System.Speech.Synthesis;
+using System.Speech.AudioFormat;
 
 namespace Mommosoft.Capi.Phone {
     public partial class MainForm : Form {
-        CapiApplication _app = new CapiApplication();
+        private CapiApplication _app = new CapiApplication();
         private string _answerSoundFileName;
+        private string _textToSpeak;
+        private Connection _currentIncommingConnection;
 
         public MainForm() {
             InitializeComponent();
@@ -38,8 +42,14 @@ namespace Mommosoft.Capi.Phone {
         // because of deadlock which can happen if we initiate the call ( pressing Call button).
         void OnConnectionStatusChangedInternal(object sender, ConnectionEventArgs e) {
             EventHandler<ConnectionEventArgs> d = new EventHandler<ConnectionEventArgs>(OnConnectionStatusChanged);
-            if (e.Connection.Status == ConnectionStatus.Connected && !string.IsNullOrEmpty(_answerSoundFileName))
-                ThreadPool.QueueUserWorkItem(SendFile, e.Connection);
+            if (e.Connection.Status == ConnectionStatus.Connected) {
+                _currentIncommingConnection = e.Connection;
+                if (!string.IsNullOrEmpty(_answerSoundFileName)) {
+                    ThreadPool.QueueUserWorkItem(SendFile, e.Connection);
+                }
+            } else {
+                _currentIncommingConnection = null;
+            }
             d.BeginInvoke(sender, e, null, null);
 
         }
@@ -130,6 +140,22 @@ namespace Mommosoft.Capi.Phone {
             _answerSoundFileName = openFileDialogWave.FileName;
         }
 
+        private void SendTextToSpeech(object obj) {
+            Connection c = (Connection)obj;
+            ConnectionStream stream = new ConnectionStream(c);
+            SpeechSynthesizer s = new SpeechSynthesizer();
+            using (MemoryStream memStream = new MemoryStream()) {
+                s.SetOutputToAudioStream(memStream, new SpeechAudioFormatInfo(EncodingFormat.ALaw,
+                    8000, 8, 1, 8000, 1, null));
+                s.Speak(_textToSpeak);
+                memStream.Seek(0, SeekOrigin.Begin);
+
+                using (ConnectionWriter writer = new ConnectionWriter(stream)) {
+                    writer.Reverse = true;
+                    writer.Write(memStream);
+                }
+            }
+        }
 
         private void SendFile(object obj) {
             Connection c = (Connection)obj;
@@ -138,6 +164,15 @@ namespace Mommosoft.Capi.Phone {
                 using (ConnectionWriter writer = new ConnectionWriter(stream)) {
                     writer.Write(fs);
                 }
+            }
+        }
+
+        private void buttonSpeak_Click(object sender, EventArgs e) {
+            Connection c = buttonDisconnect.Tag as Connection;
+            c = (c == null) ? _currentIncommingConnection : c;
+            if (c != null && c.Status == ConnectionStatus.Connected && !string.IsNullOrEmpty(textBoxTextToSpeak.Text)) {
+                _textToSpeak = textBoxTextToSpeak.Text;
+                ThreadPool.QueueUserWorkItem(SendTextToSpeech, c);
             }
         }
     }
