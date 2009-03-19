@@ -11,17 +11,17 @@
         private ConnectionStream _outStream;
         private int _BDataLenght;
         private int _BDataBlocks;
-
+        private bool _reverse;
+        private Semaphore _syncObject;
         private class StateObject {
             public Stream Stream;
             public Semaphore SyncObject;
         }
 
-        public ConnectionWriter(ConnectionStream stream) {
-            if (stream == null) throw new ArgumentNullException("stream");
-            _outStream = stream;
-            _BDataBlocks = _outStream.Connection.Application.BDataBlocks;
-            _BDataLenght = _outStream.Connection.Application.BDataLenght;
+        public ConnectionWriter(ConnectionStream stream)
+            : this(stream, stream.Connection.Application.BDataBlocks,
+            stream.Connection.Application.BDataLenght) {
+
         }
 
         public ConnectionWriter(ConnectionStream stream, int BDataBlocks, int BDataLenght) {
@@ -31,13 +31,21 @@
             _outStream = stream;
             _BDataBlocks = BDataBlocks;
             _BDataLenght = BDataLenght;
-        }
-
-        public void Close() {
-            Dispose(true);
+            _syncObject = new Semaphore(_BDataBlocks, _BDataBlocks);
         }
 
         void IDisposable.Dispose() {
+            Dispose(true);
+        }
+
+
+        public bool Reverse {
+            get { return _reverse; }
+            set { _reverse = value; }
+        }
+
+
+        public void Close() {
             Dispose(true);
         }
 
@@ -54,19 +62,18 @@
         }
 
         public void Write(Stream stream) {
-            using (Semaphore syncObject = new Semaphore(_BDataBlocks, _BDataBlocks)) {
-                StateObject state = new StateObject();
-                state.Stream = _outStream;
-                state.SyncObject = syncObject;
+            StateObject state = new StateObject();
+            state.Stream = _outStream;
+            state.SyncObject = _syncObject;
 
-                byte[] buf = new byte[_BDataLenght];
-                int bytesRead = stream.Read(buf, 0, buf.Length);
-                while (bytesRead > 0) {
-                    IAsyncResult result = _outStream.BeginWrite(buf, 0, bytesRead, EndWriteAsyncCallback,
-                        state);
-                    syncObject.WaitOne();
-                    bytesRead = stream.Read(buf, 0, buf.Length);
-                }
+            byte[] buf = new byte[_BDataLenght];
+            int bytesRead = stream.Read(buf, 0, buf.Length);
+            while (bytesRead > 0) {
+                if (_reverse) ReverseBytes(buf, 0, bytesRead);
+                IAsyncResult result = _outStream.BeginWrite(buf, 0, bytesRead, EndWriteAsyncCallback,
+                    state);
+                _syncObject.WaitOne();
+                bytesRead = stream.Read(buf, 0, buf.Length);
             }
         }
 
@@ -77,8 +84,28 @@
             } catch (Exception e) {
                 Trace.TraceError("ConnectionWrite::EndWriteAsyncCallback, Exception = {0}", e);
             }
-            state.SyncObject.Release();
         }
 
+        private static void ReverseBytes(byte[] bytes, int offset, int count) {
+            for (int i = offset; i < count; i++) {
+                bytes[i] = ReverseByte(bytes[i]);
+            }
+        }
+
+        private static byte ReverseByte(byte inByte) {
+            //inByte |= 0x55;
+            byte result = 0x00;
+            byte mask = 0x00;
+
+            for (mask = 0x80;
+                                Convert.ToInt32(mask) > 0;
+                                mask >>= 1) {
+                result >>= 1;
+                byte tempbyte = (byte)(inByte & mask);
+                if (tempbyte != 0x00)
+                    result |= 0x80;
+            }
+            return (result);
+        }
     }
 }
