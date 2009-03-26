@@ -81,8 +81,11 @@
             StateObject state = result.AsyncState as StateObject;
             try {
                 state.Stream.EndWrite(result);
+
             } catch (Exception e) {
                 Trace.TraceError("ConnectionWrite::EndWriteAsyncCallback, Exception = {0}", e);
+            } finally {
+                state.SyncObject.Release();
             }
         }
 
