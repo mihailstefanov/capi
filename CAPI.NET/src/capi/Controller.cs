@@ -258,8 +258,8 @@ namespace Mommosoft.Capi {
                 connection = new Connection(_application,
                     this,
                     indication.Identifier.PLCI,
-                    indication.CallingPartyNumber,
-                    indication.CalledPartyNumber);
+                    indication.CalledPartyNumber,
+                    indication.CallingPartyNumber);
                 Connections.InternalAdd(connection);
             }
 
