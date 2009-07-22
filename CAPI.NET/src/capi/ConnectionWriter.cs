@@ -7,6 +7,7 @@
     using System.Threading;
 
     public class ConnectionWriter : IDisposable {
+        private const int WriteTimeout = 10000; // 10 sec
         ////max packet size for this application, 2048 bytes seems to be CAPI maximum.
         private ConnectionStream _outStream;
         private int _BDataLenght;
@@ -16,6 +17,7 @@
         private class StateObject {
             public Stream Stream;
             public Semaphore SyncObject;
+            public Exception Exception;
         }
 
         public ConnectionWriter(ConnectionStream stream)
@@ -72,8 +74,12 @@
                 if (_reverse) ReverseBytes(buf, 0, bytesRead);
                 IAsyncResult result = _outStream.BeginWrite(buf, 0, bytesRead, EndWriteAsyncCallback,
                     state);
-                _syncObject.WaitOne();
-                bytesRead = stream.Read(buf, 0, buf.Length);
+                // if timeout or excheption is thrown it is may be better to break the loop.
+                if (_syncObject.WaitOne(WriteTimeout) && state.Exception == null) {
+                    bytesRead = stream.Read(buf, 0, buf.Length);
+                } else {
+                    break;
+                }
             }
         }
 
@@ -84,6 +90,7 @@
 
             } catch (Exception e) {
                 Trace.TraceError("ConnectionWrite::EndWriteAsyncCallback, Exception = {0}", e);
+                state.Exception = e;
             } finally {
                 state.SyncObject.Release();
             }
