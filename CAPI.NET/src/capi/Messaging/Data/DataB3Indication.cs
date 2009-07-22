@@ -21,8 +21,9 @@ namespace Mommosoft.Capi {
         }
 
         internal override void Notify(CapiApplication application) {
-            DataB3Response response = new DataB3Response(this);
-            application.SendMessage(response);
+            Controller ccontroller = application.GetControllerByID(Identifier.ControllerID);
+            Connection connection = ccontroller.GetConnectionByPLCI(Identifier.PLCI);
+            connection.DataB3Indication(this);
         }
     }
 }

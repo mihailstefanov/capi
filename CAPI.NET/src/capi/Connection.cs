@@ -234,7 +234,6 @@ namespace Mommosoft.Capi {
                     request.Identifier.Value = response.Identifier.Value;
                     _application.SendMessage(request);
                 }
-                //_application.OnPhysicalConnectionActive(new ConnectionEventArgs(indication, this));
             } catch (Exception e) {
                 Trace.TraceError("Connection#{0}::ConnectActiveIndication, Exception = {1}", ValidationHelper.HashString(this), e);
                 throw;
@@ -291,6 +290,16 @@ namespace Mommosoft.Capi {
                 _application.OnDTFMIndication(new DTFMEventArgs(this, indication.Digits));
             } catch (Exception e) {
                 Trace.TraceError("Connection#{0}::FacilityIndication, Exception = {1}", ValidationHelper.HashString(this), e);
+                throw;
+            }
+        }
+
+        internal void DataB3Indication(DataB3Indication indication) {
+            try {
+                DataB3Response response = new DataB3Response(indication);
+                _application.SendMessage(response);
+            } catch (Exception e) {
+                Trace.TraceError("Connection#{0}::DataB3Indication, Exception = {1}", ValidationHelper.HashString(this), e);
                 throw;
             }
         }
