@@ -23,6 +23,7 @@ namespace Mommosoft.Capi {
         private string _calledPartyNumber;
         private object _tag;
         private bool _inititator;
+        private ConnectIndication _connectIndication;
 
         internal Connection(CapiApplication application, Controller controller,
             uint plci, string calledPartyNumber, string callingPartyNumber) {
@@ -102,7 +103,7 @@ namespace Mommosoft.Capi {
             set { _dtfmDuration = value; }
         }
 
-
+        
         public void SendDTFMTone(string digits) {
             if (_status != ConnectionStatus.Connected)
                 throw Error.NotSupported();
@@ -219,10 +220,27 @@ namespace Mommosoft.Capi {
 
         #endregion HangUp
 
+        public void Answer(Reject reject, B1Protocol b1, B2Protocol b2, B3Protocol b3) {
+            Debug.Assert(_status == ConnectionStatus.D_ConnectPending);
+            if (_connectIndication == null || _status != ConnectionStatus.D_ConnectPending) {
+                throw new NotSupportedException("Connection is not in the right state.");
+            }
+            ConnectResponse response = new ConnectResponse(_connectIndication);
+            _connectIndication = null;
+            response.Reject = reject;
+            response.BPtotocol.B1 = b1;
+            response.BPtotocol.B2 = b2;
+            response.BPtotocol.B3 = b3;
+            _application.SendMessage(response);
+        }
+
         public override string ToString() {
             return string.Format("Connection {0} on Controller {1}", _plci, _controller.ID);
         }
 
+        internal void ConnectIndication(ConnectIndication indication) {
+            _connectIndication = indication;
+        }
 
         internal void ConnectActiveIndication(ConnectActiveIndication indication) {
             try {

@@ -269,10 +269,9 @@ namespace Mommosoft.Capi {
 
             // Notify user application....
             connection.Status = ConnectionStatus.D_ConnectPending;
-
-            IncomingPhysicalConnectionEventArgs args = new IncomingPhysicalConnectionEventArgs(indication, connection);
+            connection.ConnectIndication(indication);
+            IncomingPhysicalConnectionEventArgs args = new IncomingPhysicalConnectionEventArgs(connection);
             _application.OnIncomingPhysicalConnection(args);
-            _application.SendMessage(args.Response);
         }
     }
 }

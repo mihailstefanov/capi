@@ -48,6 +48,8 @@
             this.textBoxTextToSpeak = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.buttonSpeak = new System.Windows.Forms.Button();
+            this.buttonAnswer = new System.Windows.Forms.Button();
+            this.buttonHangup = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -75,9 +77,9 @@
             // listBoxInfo
             // 
             this.listBoxInfo.FormattingEnabled = true;
-            this.listBoxInfo.Location = new System.Drawing.Point(12, 264);
+            this.listBoxInfo.Location = new System.Drawing.Point(11, 260);
             this.listBoxInfo.Name = "listBoxInfo";
-            this.listBoxInfo.Size = new System.Drawing.Size(785, 95);
+            this.listBoxInfo.Size = new System.Drawing.Size(904, 95);
             this.listBoxInfo.TabIndex = 2;
             // 
             // label1
@@ -94,9 +96,9 @@
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1,
             this.toolStripStatusLabel2});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 362);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 358);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(809, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(933, 22);
             this.statusStrip1.TabIndex = 4;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -174,7 +176,7 @@
             this.groupBox1.Controls.Add(this.listBoxDTFMInfo);
             this.groupBox1.Controls.Add(this.buttonDTFMStart);
             this.groupBox1.Controls.Add(this.buttonDTFMStop);
-            this.groupBox1.Location = new System.Drawing.Point(428, 12);
+            this.groupBox1.Location = new System.Drawing.Point(552, 12);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(369, 237);
             this.groupBox1.TabIndex = 11;
@@ -257,7 +259,7 @@
             this.label5.AutoSize = true;
             this.label5.Location = new System.Drawing.Point(9, 130);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(70, 13);
+            this.label5.Size = new System.Drawing.Size(71, 13);
             this.label5.TabIndex = 17;
             this.label5.Text = "Text to speak:";
             // 
@@ -271,11 +273,33 @@
             this.buttonSpeak.UseVisualStyleBackColor = true;
             this.buttonSpeak.Click += new System.EventHandler(this.buttonSpeak_Click);
             // 
+            // buttonAnswer
+            // 
+            this.buttonAnswer.Location = new System.Drawing.Point(316, 21);
+            this.buttonAnswer.Name = "buttonAnswer";
+            this.buttonAnswer.Size = new System.Drawing.Size(75, 23);
+            this.buttonAnswer.TabIndex = 19;
+            this.buttonAnswer.Text = "Answer";
+            this.buttonAnswer.UseVisualStyleBackColor = true;
+            this.buttonAnswer.Click += new System.EventHandler(this.buttonAnswer_Click);
+            // 
+            // buttonHangup
+            // 
+            this.buttonHangup.Location = new System.Drawing.Point(397, 21);
+            this.buttonHangup.Name = "buttonHangup";
+            this.buttonHangup.Size = new System.Drawing.Size(75, 23);
+            this.buttonHangup.TabIndex = 20;
+            this.buttonHangup.Text = "Hangup";
+            this.buttonHangup.UseVisualStyleBackColor = true;
+            this.buttonHangup.Click += new System.EventHandler(this.buttonHangup_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(809, 384);
+            this.ClientSize = new System.Drawing.Size(933, 380);
+            this.Controls.Add(this.buttonHangup);
+            this.Controls.Add(this.buttonAnswer);
             this.Controls.Add(this.buttonSpeak);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.textBoxTextToSpeak);
@@ -333,5 +357,7 @@
         private System.Windows.Forms.TextBox textBoxTextToSpeak;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Button buttonSpeak;
+        private System.Windows.Forms.Button buttonAnswer;
+        private System.Windows.Forms.Button buttonHangup;
     }
 }
