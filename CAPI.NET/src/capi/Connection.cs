@@ -242,7 +242,7 @@ namespace Mommosoft.Capi {
             _connectIndication = indication;
         }
 
-        internal void ConnectActiveIndication(ConnectActiveIndication indication) {
+        internal void ConnectActiveIndication(ConnectActiveIndication indication) { 
             try {
                 ConnectActiveResponse response = new ConnectActiveResponse(indication);
                 _application.SendMessage(response);
