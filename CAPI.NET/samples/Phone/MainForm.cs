@@ -20,6 +20,8 @@ namespace Mommosoft.Capi.Phone {
 
         public MainForm() {
             InitializeComponent();
+            buttonAnswer.Enabled = false;
+            buttonHangup.Enabled = false;
         }
 
         protected override void OnLoad(EventArgs e) {
@@ -72,13 +74,10 @@ namespace Mommosoft.Capi.Phone {
 
         void OnIncomingPhysicalConnection(object sender, IncomingPhysicalConnectionEventArgs e) {
             if (listBoxInfo.InvokeRequired) {
-                // auto accpet the call... may be will be nice to have options like answer after 3th ring or ...
-                e.Reject = Reject.Accept;
-                e.B1Protocol = B1Protocol.HDLC64BFN;
-                e.B2Protocol = B2Protocol.Transparent;
-                e.B3Protocol = B3Protocol.Transparent;
                 this.Invoke(new EventHandler<IncomingPhysicalConnectionEventArgs>(OnIncomingPhysicalConnection), sender, e);
             } else {
+                buttonAnswer.Tag = e.Connection;
+                buttonAnswer.Enabled = true;
                 listBoxInfo.Items.Add(string.Format("Incoming call {0}", e.Connection.CalledPartyNumber));
             }
         }
@@ -174,6 +173,26 @@ namespace Mommosoft.Capi.Phone {
                 _textToSpeak = textBoxTextToSpeak.Text;
                 ThreadPool.QueueUserWorkItem(SendTextToSpeech, c);
             }
+        }
+
+        private void buttonAnswer_Click(object sender, EventArgs e) {
+            Connection c = buttonAnswer.Tag as Connection;
+            if (c != null) {
+                buttonAnswer.Tag = null;
+                buttonAnswer.Enabled = false;
+                buttonHangup.Tag = c;
+                buttonHangup.Enabled = true;
+                c.Answer(Reject.Accept, B1Protocol.HDLC64BFN, B2Protocol.Transparent, B3Protocol.Transparent);
+            }
+        }
+
+        private void buttonHangup_Click(object sender, EventArgs e) {
+              Connection c = buttonHangup.Tag as Connection;
+              if (c != null) {
+                  buttonHangup.Tag = null;
+                  buttonHangup.Enabled = false;
+                  c.HangUp();
+              }
         }
     }
 }
